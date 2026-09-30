@@ -16,14 +16,21 @@ import {
   ChevronRight,
   Database,
   Lock,
+  UserPlus,
+  Users,
+  Trash2,
+  Check,
+  AlertTriangle,
 } from 'lucide-react';
 import { useFinance } from '../context/FinanceContext';
+import { UserProfile } from '../types/finance';
 
 export const ProfileView: React.FC = () => {
   const {
     activeProfile,
     profiles,
     switchProfile,
+    deleteProfile,
     monthExpenses,
     monthIncome,
     availableBalance,
@@ -33,11 +40,13 @@ export const ProfileView: React.FC = () => {
     importDataJSON,
     resetToDefaults,
     setActiveTab,
+    setIsAccountModalOpen,
     showToast,
   } = useFinance();
 
   const [importFileContent, setImportFileContent] = useState('');
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+  const [profileToDelete, setProfileToDelete] = useState<UserProfile | null>(null);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -65,6 +74,12 @@ export const ProfileView: React.FC = () => {
     window.print();
   };
 
+  const handleConfirmDelete = () => {
+    if (!profileToDelete) return;
+    deleteProfile(profileToDelete.id);
+    setProfileToDelete(null);
+  };
+
   return (
     <div className="space-y-6 pb-24 md:pb-12">
       {/* Profile Card Header */}
@@ -90,21 +105,14 @@ export const ProfileView: React.FC = () => {
                 <p className="text-xs text-slate-400">{activeProfile.email}</p>
               </div>
 
-              {/* Profile switch pill */}
-              <div className="flex items-center gap-2 self-center sm:self-auto bg-black/40 border border-white/10 px-3 py-1.5 rounded-xl">
-                <span className="text-[11px] text-slate-400">Perfil:</span>
-                <select
-                  value={activeProfile.id}
-                  onChange={(e) => switchProfile(e.target.value)}
-                  className="bg-transparent text-xs font-semibold text-white outline-none cursor-pointer"
-                >
-                  {profiles.map((p) => (
-                    <option key={p.id} value={p.id} className="bg-slate-900 text-white">
-                      {p.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              {/* Profile switch button */}
+              <button
+                onClick={() => setIsAccountModalOpen(true)}
+                className="flex items-center gap-2 self-center sm:self-auto bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 px-3.5 py-1.5 rounded-xl text-xs font-bold text-emerald-300 transition-all active:scale-95"
+              >
+                <Users className="w-3.5 h-3.5" />
+                <span>Gerenciar / Trocar Conta ({profiles.length})</span>
+              </button>
             </div>
 
             {/* Monthly mini-stats */}
@@ -135,6 +143,97 @@ export const ProfileView: React.FC = () => {
               </div>
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* Accounts & Users Management Box */}
+      <div className="p-5 rounded-2xl bg-[#121622]/90 border border-white/[0.07] space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+          <div className="flex items-center gap-2">
+            <Users className="w-4 h-4 text-emerald-400" />
+            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-300">
+              Contas & Usuários ({profiles.length})
+            </h3>
+          </div>
+
+          <button
+            onClick={() => setIsAccountModalOpen(true)}
+            className="px-3 py-1.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/30 text-emerald-400 text-xs font-bold flex items-center gap-1.5 transition-all self-start sm:self-auto active:scale-95"
+          >
+            <UserPlus className="w-3.5 h-3.5" />
+            + Nova Conta / Adicionar Usuário
+          </button>
+        </div>
+
+        {/* List of profiles inline */}
+        <div className="space-y-2.5">
+          {profiles.map((p) => {
+            const isActive = p.id === activeProfile.id;
+            const isOnlyOne = profiles.length <= 1;
+
+            return (
+              <div
+                key={p.id}
+                className={`p-3 rounded-xl border flex items-center justify-between gap-3 transition-all ${
+                  isActive
+                    ? 'bg-emerald-950/20 border-emerald-500/30'
+                    : 'bg-black/20 border-white/5 hover:border-white/10'
+                }`}
+              >
+                <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                  <div
+                    className={`w-9 h-9 rounded-xl flex items-center justify-center font-bold text-xs shrink-0 border ${
+                      isActive
+                        ? 'bg-emerald-500 text-slate-950 border-emerald-400'
+                        : 'bg-white/5 text-slate-300 border-white/10'
+                    }`}
+                  >
+                    {p.name.charAt(0).toUpperCase()}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-bold text-white truncate">{p.name}</span>
+                      {isActive && (
+                        <span className="px-1.5 py-0.5 rounded text-[10px] font-extrabold bg-emerald-500/20 text-emerald-400 flex items-center gap-0.5 shrink-0">
+                          <Check className="w-2.5 h-2.5 stroke-[3]" />
+                          Ativa
+                        </span>
+                      )}
+                    </div>
+                    <span className="text-[11px] text-slate-400 block truncate">{p.email}</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-1.5 shrink-0">
+                  {!isActive && (
+                    <button
+                      onClick={() => switchProfile(p.id)}
+                      className="px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/15 text-white text-[11px] font-semibold transition-colors"
+                    >
+                      Alternar
+                    </button>
+                  )}
+
+                  <button
+                    onClick={() => setProfileToDelete(p)}
+                    disabled={isOnlyOne}
+                    title={
+                      isOnlyOne
+                        ? 'Você não pode excluir a única conta restante'
+                        : `Excluir conta ${p.name}`
+                    }
+                    className={`p-1.5 rounded-lg border transition-all ${
+                      isOnlyOne
+                        ? 'opacity-20 cursor-not-allowed border-transparent text-slate-600'
+                        : 'text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 border-transparent hover:border-rose-500/20'
+                    }`}
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
 
@@ -285,6 +384,48 @@ export const ProfileView: React.FC = () => {
                 className="py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-xs font-bold text-white"
               >
                 Restaurar Agora
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete profile confirmation modal */}
+      {profileToDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-150">
+          <div className="w-full max-w-sm rounded-2xl bg-[#121622] border border-rose-500/30 p-5 shadow-2xl">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-10 h-10 rounded-xl bg-rose-500/20 text-rose-400 flex items-center justify-center shrink-0">
+                <AlertTriangle className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="text-sm font-bold text-white">
+                  Excluir conta "{profileToDelete.name}"?
+                </h3>
+                <span className="text-[11px] text-rose-400 font-semibold block">
+                  Ação irreversível
+                </span>
+              </div>
+            </div>
+
+            <p className="text-xs text-slate-400 leading-relaxed mb-5">
+              Todos os lançamentos financeiros, despesas e dados registrados nesta conta serão apagados permanentemente.
+            </p>
+
+            <div className="grid grid-cols-2 gap-2.5">
+              <button
+                type="button"
+                onClick={() => setProfileToDelete(null)}
+                className="py-2.5 px-3 rounded-xl border border-white/10 text-xs font-semibold text-slate-300 hover:bg-white/5 transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmDelete}
+                className="py-2.5 px-3 rounded-xl bg-rose-600 hover:bg-rose-500 text-xs font-bold text-white shadow-lg shadow-rose-950/40 transition-colors"
+              >
+                Sim, Excluir
               </button>
             </div>
           </div>

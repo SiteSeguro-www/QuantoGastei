@@ -380,9 +380,9 @@ export const AnalyticsView: React.FC = () => {
                 </svg>
 
                 {/* Center text in donut */}
-                <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none px-2">
                   <span className="text-[10px] text-slate-400 uppercase font-semibold">Total</span>
-                  <span className="font-mono-nums text-xs font-bold text-white max-w-[100px] truncate text-center">
+                  <span className="font-mono-nums text-[11px] sm:text-xs font-bold text-white leading-tight text-center break-words">
                     {formatCurrency(totalExpense)}
                   </span>
                 </div>

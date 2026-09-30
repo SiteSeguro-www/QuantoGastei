@@ -104,7 +104,7 @@ export const CategoriesView: React.FC = () => {
       </div>
 
       {/* Categories Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-3">
         {filteredCategories.map((cat) => (
           <div
             key={cat.id}

@@ -14,6 +14,8 @@ interface FinanceContextType {
   activeProfile: UserProfile;
   profiles: UserProfile[];
   switchProfile: (profileId: string) => void;
+  addProfile: (name: string, monthlyIncomeGoal?: number) => UserProfile;
+  deleteProfile: (profileId: string) => boolean;
   transactions: Transaction[];
   categories: Category[];
   fixedBills: FixedBill[];
@@ -48,6 +50,8 @@ interface FinanceContextType {
   // Quick action modal triggers
   isAddModalOpen: boolean;
   setIsAddModalOpen: (open: boolean) => void;
+  isAccountModalOpen: boolean;
+  setIsAccountModalOpen: (open: boolean) => void;
   editingTransaction: Transaction | null;
   setEditingTransaction: (tx: Transaction | null) => void;
   presetPreload: { categoryId?: string; amount?: number; description?: string } | null;
@@ -83,7 +87,7 @@ export const getCurrentTimeString = (): string => {
 
 export const FinanceProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [activeTab, setActiveTab] = useState<ViewTab>('dashboard');
-  const [profiles] = useState<UserProfile[]>(() => {
+  const [profiles, setProfiles] = useState<UserProfile[]>(() => {
     const saved = localStorage.getItem('finan_profiles');
     if (saved) {
       try {
@@ -98,6 +102,11 @@ export const FinanceProvider: React.FC<{ children: ReactNode }> = ({ children })
   const [activeProfileId, setActiveProfileId] = useState<string>(() => {
     return localStorage.getItem('finan_active_profile_id') || DEFAULT_PROFILES[0].id;
   });
+
+  // Sync profiles to localStorage whenever updated
+  useEffect(() => {
+    localStorage.setItem('finan_profiles', JSON.stringify(profiles));
+  }, [profiles]);
 
   const activeProfile = useMemo(() => {
     return profiles.find((p) => p.id === activeProfileId) || profiles[0];
@@ -155,6 +164,7 @@ export const FinanceProvider: React.FC<{ children: ReactNode }> = ({ children })
   // UI state
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isAccountModalOpen, setIsAccountModalOpen] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
   const [presetPreload, setPresetPreload] = useState<{ categoryId?: string; amount?: number; description?: string } | null>(null);
 
@@ -213,6 +223,50 @@ export const FinanceProvider: React.FC<{ children: ReactNode }> = ({ children })
     }
 
     showToast(`Perfil alterado para ${profiles.find((p) => p.id === profileId)?.name || 'Perfil'}`, 'info');
+  };
+
+  // Add new profile / account
+  const addProfile = (name: string, monthlyIncomeGoal: number = 4500): UserProfile => {
+    const trimmed = name.trim();
+    const newProfile: UserProfile = {
+      id: `user_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+      name: trimmed,
+      email: `${trimmed.toLowerCase().replace(/[^a-z0-9]/g, '')}@quantogastei.app`,
+      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
+      currency: 'BRL',
+      monthlyIncomeGoal,
+    };
+
+    setProfiles((prev) => [...prev, newProfile]);
+    switchProfile(newProfile.id);
+    showToast(`✓ Conta "${trimmed}" criada e ativada!`, 'success');
+    return newProfile;
+  };
+
+  // Delete profile / account
+  const deleteProfile = (profileId: string): boolean => {
+    if (profiles.length <= 1) {
+      showToast('Você não pode excluir a única conta restante.', 'error');
+      return false;
+    }
+
+    const profileToDelete = profiles.find((p) => p.id === profileId);
+    const newProfiles = profiles.filter((p) => p.id !== profileId);
+    setProfiles(newProfiles);
+
+    // Clean up profile storage data
+    localStorage.removeItem(`finan_tx_${profileId}`);
+    localStorage.removeItem(`finan_cats_${profileId}`);
+    localStorage.removeItem(`finan_bills_${profileId}`);
+
+    // If active profile was deleted, switch to first remaining profile
+    if (activeProfileId === profileId) {
+      const nextProfile = newProfiles[0];
+      switchProfile(nextProfile.id);
+    }
+
+    showToast(`✓ Conta "${profileToDelete?.name || 'Usuário'}" excluída.`, 'info');
+    return true;
   };
 
   const showToast = (message: string, type: 'success' | 'info' | 'error' = 'success') => {
@@ -516,6 +570,8 @@ export const FinanceProvider: React.FC<{ children: ReactNode }> = ({ children })
         activeProfile,
         profiles,
         switchProfile,
+        addProfile,
+        deleteProfile,
         transactions,
         categories,
         fixedBills,
@@ -540,6 +596,8 @@ export const FinanceProvider: React.FC<{ children: ReactNode }> = ({ children })
         upcomingBills,
         isAddModalOpen,
         setIsAddModalOpen,
+        isAccountModalOpen,
+        setIsAccountModalOpen,
         editingTransaction,
         setEditingTransaction,
         presetPreload,

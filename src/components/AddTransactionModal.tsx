@@ -274,46 +274,46 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
             </div>
 
             {/* Rapid increment / decrement buttons requested */}
-            <div className="grid grid-cols-6 sm:flex sm:flex-wrap items-center justify-center gap-1 sm:gap-1.5 mt-2.5 sm:mt-3 pt-2.5 sm:pt-3 border-t border-white/5">
+            <div className="grid grid-cols-3 xs:grid-cols-6 sm:flex sm:flex-wrap items-center justify-center gap-1.5 mt-2.5 sm:mt-3 pt-2.5 sm:pt-3 border-t border-white/5">
               <button
                 type="button"
                 onClick={() => handleDelta(-5)}
-                className="px-1.5 sm:px-2.5 py-1 rounded-lg text-[10px] sm:text-xs font-mono font-medium bg-white/5 hover:bg-white/10 text-slate-300 border border-white/5 active:scale-95 transition-transform text-center"
+                className="py-1.5 px-2 rounded-lg text-xs font-mono font-medium bg-white/5 hover:bg-white/10 text-slate-300 border border-white/5 active:scale-95 transition-transform text-center"
               >
                 -5
               </button>
               <button
                 type="button"
                 onClick={() => handleDelta(-1)}
-                className="px-1.5 sm:px-2.5 py-1 rounded-lg text-[10px] sm:text-xs font-mono font-medium bg-white/5 hover:bg-white/10 text-slate-300 border border-white/5 active:scale-95 transition-transform text-center"
+                className="py-1.5 px-2 rounded-lg text-xs font-mono font-medium bg-white/5 hover:bg-white/10 text-slate-300 border border-white/5 active:scale-95 transition-transform text-center"
               >
                 -1
               </button>
               <button
                 type="button"
                 onClick={() => handleDelta(1)}
-                className="px-1.5 sm:px-2.5 py-1 rounded-lg text-[10px] sm:text-xs font-mono font-medium bg-white/5 hover:bg-white/10 text-slate-300 border border-white/5 active:scale-95 transition-transform text-center"
+                className="py-1.5 px-2 rounded-lg text-xs font-mono font-medium bg-white/5 hover:bg-white/10 text-slate-300 border border-white/5 active:scale-95 transition-transform text-center"
               >
                 +1
               </button>
               <button
                 type="button"
                 onClick={() => handleDelta(5)}
-                className="px-1.5 sm:px-2.5 py-1 rounded-lg text-[10px] sm:text-xs font-mono font-medium bg-white/5 hover:bg-white/10 text-slate-300 border border-white/5 active:scale-95 transition-transform text-center"
+                className="py-1.5 px-2 rounded-lg text-xs font-mono font-medium bg-white/5 hover:bg-white/10 text-slate-300 border border-white/5 active:scale-95 transition-transform text-center"
               >
                 +5
               </button>
               <button
                 type="button"
                 onClick={() => handleDelta(10)}
-                className="px-1.5 sm:px-2.5 py-1 rounded-lg text-[10px] sm:text-xs font-mono font-medium bg-white/5 hover:bg-white/10 text-slate-300 border border-white/5 active:scale-95 transition-transform text-center"
+                className="py-1.5 px-2 rounded-lg text-xs font-mono font-medium bg-white/5 hover:bg-white/10 text-slate-300 border border-white/5 active:scale-95 transition-transform text-center"
               >
                 +10
               </button>
               <button
                 type="button"
                 onClick={() => handleDelta(50)}
-                className="px-1.5 sm:px-2.5 py-1 rounded-lg text-[10px] sm:text-xs font-mono font-medium bg-white/5 hover:bg-white/10 text-slate-300 border border-white/5 active:scale-95 transition-transform text-center"
+                className="py-1.5 px-2 rounded-lg text-xs font-mono font-medium bg-white/5 hover:bg-white/10 text-slate-300 border border-white/5 active:scale-95 transition-transform text-center"
               >
                 +50
               </button>
@@ -425,7 +425,7 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
             </div>
 
             {/* Categories Grid */}
-            <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 max-h-48 overflow-y-auto pr-1">
+            <div className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 gap-2 max-h-48 overflow-y-auto pr-1">
               {filteredCategories.map((cat) => {
                 const isSelected = selectedCategoryId === cat.id;
                 return (
@@ -433,7 +433,7 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
                     key={cat.id}
                     type="button"
                     onClick={() => setSelectedCategoryId(cat.id)}
-                    className={`flex flex-col items-center justify-center p-2.5 rounded-xl border text-center transition-all ${
+                    className={`flex flex-col items-center justify-center p-2 rounded-xl border text-center transition-all ${
                       isSelected
                         ? 'bg-white/10 border-emerald-500 text-white shadow-md'
                         : 'bg-white/[0.02] border-white/5 text-slate-400 hover:text-slate-200 hover:bg-white/[0.05]'
@@ -448,7 +448,7 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
                     >
                       <CategoryIcon icon={cat.icon} emoji={cat.emoji} className="w-4 h-4" />
                     </div>
-                    <span className="text-[11px] font-medium leading-tight truncate w-full">
+                    <span className="text-[10px] sm:text-[11px] font-medium leading-tight truncate w-full px-0.5">
                       {cat.name}
                     </span>
                   </button>
@@ -489,8 +489,8 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
             </div>
 
             {!useCurrentDateTime && (
-              <div className="grid grid-cols-2 gap-3 pt-2 border-t border-white/5 animate-in fade-in duration-150">
-                <div>
+              <div className="grid grid-cols-1 xs:grid-cols-2 gap-2.5 pt-2 border-t border-white/5 animate-in fade-in duration-150">
+                <div className="min-w-0">
                   <label className="text-[11px] text-slate-400 flex items-center gap-1 mb-1">
                     <Calendar className="w-3 h-3" /> Data
                   </label>
@@ -501,7 +501,7 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
                     className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-white/5 border border-white/10 text-white focus:outline-none focus:border-emerald-500"
                   />
                 </div>
-                <div>
+                <div className="min-w-0">
                   <label className="text-[11px] text-slate-400 flex items-center gap-1 mb-1">
                     <Clock className="w-3 h-3" /> Hora
                   </label>

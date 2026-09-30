@@ -97,6 +97,7 @@ export const DesktopSidebar: React.FC = () => {
     activeTab,
     setActiveTab,
     setIsAddModalOpen,
+    setIsAccountModalOpen,
     setEditingTransaction,
     activeProfile,
     profiles,
@@ -129,7 +130,7 @@ export const DesktopSidebar: React.FC = () => {
         </div>
         <div>
           <span className="text-base font-extrabold text-white tracking-tight block">
-            Meu Financeiro
+            QuantoGastei
           </span>
           <span className="text-[11px] text-slate-400 block -mt-0.5">
             Controle Pessoal
@@ -181,12 +182,12 @@ export const DesktopSidebar: React.FC = () => {
         </div>
 
         {/* Profile Switcher */}
-        <div className="flex items-center justify-between p-2 rounded-xl bg-white/[0.03] border border-white/5">
+        <div className="p-2.5 rounded-xl bg-white/[0.03] border border-white/5 space-y-2">
           <div className="flex items-center gap-2.5 min-w-0">
             <div className="w-8 h-8 rounded-full bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-300 font-bold text-xs shrink-0">
               {activeProfile.name.charAt(0)}
             </div>
-            <div className="min-w-0">
+            <div className="min-w-0 flex-1">
               <span className="text-xs font-semibold text-white block truncate">
                 {activeProfile.name}
               </span>
@@ -196,20 +197,12 @@ export const DesktopSidebar: React.FC = () => {
             </div>
           </div>
 
-          {profiles.length > 1 && (
-            <select
-              aria-label="Trocar perfil de usuário"
-              value={activeProfile.id}
-              onChange={(e) => switchProfile(e.target.value)}
-              className="text-[11px] bg-slate-900 border border-white/10 text-slate-300 rounded px-1.5 py-0.5 focus:outline-none"
-            >
-              {profiles.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.name}
-                </option>
-              ))}
-            </select>
-          )}
+          <button
+            onClick={() => setIsAccountModalOpen(true)}
+            className="w-full py-1.5 px-2.5 rounded-lg bg-white/5 hover:bg-white/10 text-emerald-400 border border-white/5 text-[11px] font-bold flex items-center justify-center gap-1.5 transition-colors"
+          >
+            <span>Gerenciar Contas / + Nova</span>
+          </button>
         </div>
       </div>
     </aside>

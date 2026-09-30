@@ -349,7 +349,7 @@ export const FixedBillsView: React.FC = () => {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 xs:grid-cols-2 gap-3">
                 <div>
                   <label className="text-xs font-semibold text-slate-300 block mb-1">
                     Valor Mensal (R$)

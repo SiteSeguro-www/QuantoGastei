@@ -12,6 +12,9 @@ import {
   Sparkles,
   ChevronRight,
   Clock,
+  Users,
+  UserPlus,
+  ChevronDown,
 } from 'lucide-react';
 import { useFinance, getTodayString } from '../context/FinanceContext';
 import { QUICK_PRESETS } from '../data/initialData';
@@ -25,6 +28,7 @@ export const DashboardView: React.FC = () => {
     activeProfile,
     profiles,
     switchProfile,
+    setIsAccountModalOpen,
     todayExpenses,
     monthExpenses,
     totalFixedBillsAmount,
@@ -70,41 +74,52 @@ export const DashboardView: React.FC = () => {
   return (
     <div className="space-y-6 pb-24 md:pb-12">
       {/* Top Greeting & Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-1">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+            <h1 className="text-xl sm:text-3xl font-extrabold text-white tracking-tight">
               Olá {activeProfile.name} 👋
             </h1>
           </div>
-          <p className="text-sm text-slate-400 mt-1">
+          <p className="text-xs sm:text-sm text-slate-400 mt-0.5 sm:mt-1">
             Como estão suas finanças hoje?
           </p>
         </div>
 
-        {/* Profile / Account switcher */}
-        <div className="flex items-center gap-2.5">
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/[0.04] border border-white/10">
-            <span className="text-xs text-slate-400">Conta:</span>
-            <select
-              value={activeProfile.id}
-              onChange={(e) => switchProfile(e.target.value)}
-              className="bg-transparent text-xs font-semibold text-white outline-none cursor-pointer"
-            >
-              {profiles.map((p) => (
-                <option key={p.id} value={p.id} className="bg-slate-900 text-white">
-                  {p.name}
-                </option>
-              ))}
-            </select>
-          </div>
+        {/* Profile / Account switcher & New Account Action */}
+        <div className="flex items-center gap-2 self-start sm:self-auto flex-wrap">
+          <button
+            onClick={() => setIsAccountModalOpen(true)}
+            className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 active:scale-95 transition-all"
+            title="Alternar entre contas cadastradas"
+          >
+            <div className="w-5 h-5 rounded-md bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-[11px] font-extrabold">
+              {activeProfile.name.charAt(0).toUpperCase()}
+            </div>
+            <div className="text-left">
+              <span className="text-[10px] text-slate-400 block leading-none">Conta ativa</span>
+              <span className="text-xs font-bold text-white block mt-0.5 truncate max-w-[120px]">
+                {activeProfile.name}
+              </span>
+            </div>
+            <ChevronDown className="w-3.5 h-3.5 text-slate-400 ml-0.5" />
+          </button>
+
+          <button
+            onClick={() => setIsAccountModalOpen(true)}
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/25 text-xs font-bold active:scale-95 transition-all"
+            title="Adicionar nova conta ou usuário"
+          >
+            <UserPlus className="w-3.5 h-3.5" />
+            <span>+ Nova Conta</span>
+          </button>
         </div>
       </div>
 
       {/* 4 Main Summary Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 xs:gap-2.5 sm:gap-4">
         {/* Gastos de Hoje */}
-        <div className="p-3 sm:p-5 rounded-xl sm:rounded-2xl bg-[#121622]/90 border border-white/[0.07] relative overflow-hidden group hover:border-white/15 transition-all min-w-0">
+        <div className="p-3 xs:p-3.5 sm:p-5 rounded-2xl bg-[#121622]/90 border border-white/[0.07] relative overflow-hidden group hover:border-white/15 transition-all min-w-0">
           <div className="flex items-center justify-between mb-1.5 sm:mb-2">
             <span className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider text-slate-400 truncate">
               Gastos de Hoje
@@ -113,7 +128,7 @@ export const DashboardView: React.FC = () => {
               <TrendingDown className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </div>
           </div>
-          <div className="font-mono-nums text-sm sm:text-2xl font-extrabold text-rose-400 tracking-tight truncate">
+          <div className="font-mono-nums text-sm xs:text-base sm:text-2xl font-extrabold text-rose-400 tracking-tight truncate">
             {formatCurrency(todayExpenses)}
           </div>
           <span className="text-[10px] sm:text-[11px] text-slate-500 mt-1 block truncate">
@@ -122,7 +137,7 @@ export const DashboardView: React.FC = () => {
         </div>
 
         {/* Gastos do Mês */}
-        <div className="p-3 sm:p-5 rounded-xl sm:rounded-2xl bg-[#121622]/90 border border-white/[0.07] relative overflow-hidden group hover:border-white/15 transition-all min-w-0">
+        <div className="p-3 xs:p-3.5 sm:p-5 rounded-2xl bg-[#121622]/90 border border-white/[0.07] relative overflow-hidden group hover:border-white/15 transition-all min-w-0">
           <div className="flex items-center justify-between mb-1.5 sm:mb-2">
             <span className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider text-slate-400 truncate">
               Gastos do Mês
@@ -131,16 +146,16 @@ export const DashboardView: React.FC = () => {
               <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </div>
           </div>
-          <div className="font-mono-nums text-sm sm:text-2xl font-extrabold text-white tracking-tight truncate">
+          <div className="font-mono-nums text-sm xs:text-base sm:text-2xl font-extrabold text-white tracking-tight truncate">
             {formatCurrency(monthExpenses)}
           </div>
           <span className="text-[10px] sm:text-[11px] text-slate-500 mt-1 block truncate">
-            Setembro de 2026
+            Mês atual
           </span>
         </div>
 
         {/* Total de Contas */}
-        <div className="p-3 sm:p-5 rounded-xl sm:rounded-2xl bg-[#121622]/90 border border-white/[0.07] relative overflow-hidden group hover:border-white/15 transition-all min-w-0">
+        <div className="p-3 xs:p-3.5 sm:p-5 rounded-2xl bg-[#121622]/90 border border-white/[0.07] relative overflow-hidden group hover:border-white/15 transition-all min-w-0">
           <div className="flex items-center justify-between mb-1.5 sm:mb-2">
             <span className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider text-slate-400 truncate">
               Total de Contas
@@ -149,7 +164,7 @@ export const DashboardView: React.FC = () => {
               <CreditCard className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </div>
           </div>
-          <div className="font-mono-nums text-sm sm:text-2xl font-extrabold text-slate-200 tracking-tight truncate">
+          <div className="font-mono-nums text-sm xs:text-base sm:text-2xl font-extrabold text-slate-200 tracking-tight truncate">
             {formatCurrency(totalFixedBillsAmount)}
           </div>
           <span className="text-[10px] sm:text-[11px] text-slate-500 mt-1 block truncate">
@@ -158,7 +173,7 @@ export const DashboardView: React.FC = () => {
         </div>
 
         {/* Saldo Disponível */}
-        <div className="p-3 sm:p-5 rounded-xl sm:rounded-2xl bg-[#121622]/90 border border-emerald-500/20 relative overflow-hidden group hover:border-emerald-500/40 transition-all glow-emerald min-w-0">
+        <div className="p-3 xs:p-3.5 sm:p-5 rounded-2xl bg-[#121622]/90 border border-emerald-500/20 relative overflow-hidden group hover:border-emerald-500/40 transition-all glow-emerald min-w-0">
           <div className="flex items-center justify-between mb-1.5 sm:mb-2">
             <span className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider text-emerald-400 truncate">
               Saldo Disponível
@@ -167,7 +182,7 @@ export const DashboardView: React.FC = () => {
               <Wallet className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </div>
           </div>
-          <div className="font-mono-nums text-sm sm:text-2xl font-extrabold text-emerald-400 tracking-tight truncate">
+          <div className="font-mono-nums text-sm xs:text-base sm:text-2xl font-extrabold text-emerald-400 tracking-tight truncate">
             {formatCurrency(availableBalance)}
           </div>
           <span className="text-[10px] sm:text-[11px] text-emerald-400/70 mt-1 block truncate">

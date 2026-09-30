@@ -57,15 +57,15 @@ export const TransactionItem: React.FC<TransactionItemProps> = ({
             <h4 className="text-xs sm:text-sm font-semibold text-white tracking-tight truncate">
               {transaction.categoryName}
             </h4>
-            <div className="flex items-center gap-1 text-[11px] sm:text-xs text-slate-400 mt-0.5 truncate">
-              {transaction.description ? (
-                <>
-                  <span className="truncate text-slate-300 max-w-[110px] xs:max-w-[160px] sm:max-w-[280px]">
-                    {transaction.description}
-                  </span>
-                  <span aria-hidden="true" className="text-slate-600">·</span>
-                </>
-              ) : null}
+            <div className="flex items-center gap-1 text-[11px] sm:text-xs text-slate-400 mt-0.5 min-w-0">
+              {transaction.description && (
+                <span className="truncate text-slate-300 min-w-0 flex-shrink">
+                  {transaction.description}
+                </span>
+              )}
+              {transaction.description && (
+                <span aria-hidden="true" className="text-slate-600 shrink-0">·</span>
+              )}
               <span className="font-mono-nums text-[10px] sm:text-[11px] text-slate-400 shrink-0">
                 {transaction.time}
               </span>
@@ -75,7 +75,7 @@ export const TransactionItem: React.FC<TransactionItemProps> = ({
 
         {/* Right: Amount & Quick expand chevron */}
         <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-          <div className="text-right">
+          <div className="text-right shrink-0">
             <span
               className={`font-mono-nums text-xs sm:text-base font-bold tracking-tight whitespace-nowrap ${
                 isExpense ? 'text-rose-400' : 'text-emerald-400'
@@ -86,7 +86,7 @@ export const TransactionItem: React.FC<TransactionItemProps> = ({
             </span>
           </div>
 
-          <div className="text-slate-500 group-hover:text-slate-300 p-0.5 sm:p-1 transition-colors">
+          <div className="text-slate-500 group-hover:text-slate-300 p-0.5 sm:p-1 transition-colors shrink-0">
             {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
           </div>
         </div>
@@ -99,12 +99,12 @@ export const TransactionItem: React.FC<TransactionItemProps> = ({
           className="mt-3 pt-3 border-t border-white/[0.06] flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 animate-in fade-in slide-in-from-top-1 duration-150"
         >
           {/* Quick Increment/Decrement Buttons */}
-          <div className="flex items-center justify-between sm:justify-start gap-1 w-full sm:w-auto">
-            <span className="text-[10px] sm:text-[11px] text-slate-400 mr-1 hidden xs:inline">Ajustar:</span>
+          <div className="flex items-center gap-1 w-full sm:w-auto">
+            <span className="text-[10px] text-slate-400 mr-1 shrink-0">Ajustar:</span>
             <button
               type="button"
               onClick={(e) => handleAdjust(e, -5)}
-              className="flex-1 sm:flex-initial px-2 py-1 rounded-lg text-xs font-mono font-medium bg-white/5 hover:bg-white/10 text-slate-300 border border-white/5 active:scale-95 transition-transform text-center"
+              className="flex-1 sm:flex-initial px-2 py-1 rounded-lg text-xs font-mono font-medium bg-white/5 hover:bg-white/10 text-slate-300 border border-white/5 active:scale-95 transition-transform text-center shrink-0"
               title="Diminuir R$ 5,00"
             >
               − 5
@@ -112,7 +112,7 @@ export const TransactionItem: React.FC<TransactionItemProps> = ({
             <button
               type="button"
               onClick={(e) => handleAdjust(e, -1)}
-              className="flex-1 sm:flex-initial px-2 py-1 rounded-lg text-xs font-mono font-medium bg-white/5 hover:bg-white/10 text-slate-300 border border-white/5 active:scale-95 transition-transform text-center"
+              className="flex-1 sm:flex-initial px-2 py-1 rounded-lg text-xs font-mono font-medium bg-white/5 hover:bg-white/10 text-slate-300 border border-white/5 active:scale-95 transition-transform text-center shrink-0"
               title="Diminuir R$ 1,00"
             >
               − 1
@@ -120,7 +120,7 @@ export const TransactionItem: React.FC<TransactionItemProps> = ({
             <button
               type="button"
               onClick={(e) => handleAdjust(e, 1)}
-              className="flex-1 sm:flex-initial px-2 py-1 rounded-lg text-xs font-mono font-medium bg-white/5 hover:bg-white/10 text-slate-300 border border-white/5 active:scale-95 transition-transform text-center"
+              className="flex-1 sm:flex-initial px-2 py-1 rounded-lg text-xs font-mono font-medium bg-white/5 hover:bg-white/10 text-slate-300 border border-white/5 active:scale-95 transition-transform text-center shrink-0"
               title="Aumentar R$ 1,00"
             >
               + 1
@@ -128,7 +128,7 @@ export const TransactionItem: React.FC<TransactionItemProps> = ({
             <button
               type="button"
               onClick={(e) => handleAdjust(e, 5)}
-              className="flex-1 sm:flex-initial px-2 py-1 rounded-lg text-xs font-mono font-medium bg-white/5 hover:bg-white/10 text-slate-300 border border-white/5 active:scale-95 transition-transform text-center"
+              className="flex-1 sm:flex-initial px-2 py-1 rounded-lg text-xs font-mono font-medium bg-white/5 hover:bg-white/10 text-slate-300 border border-white/5 active:scale-95 transition-transform text-center shrink-0"
               title="Aumentar R$ 5,00"
             >
               + 5

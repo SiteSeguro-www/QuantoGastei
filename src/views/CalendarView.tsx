@@ -127,13 +127,13 @@ export const CalendarView: React.FC = () => {
       </div>
 
       {/* Calendar Grid Container */}
-      <div className="p-2.5 sm:p-5 rounded-xl sm:rounded-2xl bg-[#121622]/90 border border-white/[0.07]">
+      <div className="p-2 xs:p-3 sm:p-5 rounded-xl sm:rounded-2xl bg-[#121622]/90 border border-white/[0.07]">
         {/* Days of week */}
-        <div className="grid grid-cols-7 gap-1 text-center mb-2">
+        <div className="grid grid-cols-7 gap-0.5 xs:gap-1 text-center mb-2">
           {daysOfWeek.map((dow, idx) => (
             <div
               key={dow}
-              className={`text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider py-1 ${
+              className={`text-[9px] xs:text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider py-1 ${
                 idx === 0 || idx === 6 ? 'text-slate-500' : 'text-slate-400'
               }`}
             >
@@ -143,10 +143,10 @@ export const CalendarView: React.FC = () => {
         </div>
 
         {/* Calendar Days */}
-        <div className="grid grid-cols-7 gap-1 sm:gap-2">
+        <div className="grid grid-cols-7 gap-0.5 xs:gap-1 sm:gap-2">
           {/* Empty spacer cells before day 1 */}
           {Array.from({ length: startDayOfWeek }).map((_, i) => (
-            <div key={`empty-${i}`} className="min-h-[48px] sm:min-h-[64px] rounded-lg sm:rounded-xl bg-transparent" />
+            <div key={`empty-${i}`} className="min-h-[42px] xs:min-h-[48px] sm:min-h-[64px] rounded-lg sm:rounded-xl bg-transparent" />
           ))}
 
           {/* Actual days in month */}
@@ -161,7 +161,7 @@ export const CalendarView: React.FC = () => {
               <button
                 key={day}
                 onClick={() => handleSelectDay(day)}
-                className={`min-h-[48px] sm:min-h-[68px] p-1 sm:p-2 rounded-lg sm:rounded-xl text-left flex flex-col justify-between transition-all border relative ${
+                className={`min-h-[42px] xs:min-h-[48px] sm:min-h-[68px] p-0.5 xs:p-1 sm:p-2 rounded-lg sm:rounded-xl text-left flex flex-col justify-between transition-all border relative ${
                   isSelected
                     ? 'bg-emerald-500/15 border-emerald-500 text-white shadow-md'
                     : isToday
@@ -171,7 +171,7 @@ export const CalendarView: React.FC = () => {
               >
                 <div className="flex items-center justify-between w-full">
                   <span
-                    className={`text-[11px] sm:text-xs font-bold font-mono ${
+                    className={`text-[10px] xs:text-[11px] sm:text-xs font-bold font-mono ${
                       isToday
                         ? 'w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-emerald-500 text-slate-950 flex items-center justify-center text-[10px] sm:text-xs'
                         : 'text-slate-300'
@@ -181,7 +181,7 @@ export const CalendarView: React.FC = () => {
                   </span>
 
                   {dayData && dayData.count > 0 && (
-                    <span className="w-1.5 h-1.5 rounded-full bg-rose-400" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-rose-400 shrink-0" />
                   )}
                 </div>
 

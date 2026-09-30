@@ -162,10 +162,10 @@ export const HistoryView: React.FC = () => {
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 w-full sm:w-auto">
           <button
             onClick={() => exportDataCSV(dateFilter === 'month' ? 'month' : 'all')}
-            className="px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-semibold text-slate-300 border border-white/10 flex items-center gap-1.5 transition-colors"
+            className="flex-1 sm:flex-initial px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-semibold text-slate-300 border border-white/10 flex items-center justify-center gap-1.5 transition-colors"
           >
             <Download className="w-3.5 h-3.5" />
             Exportar CSV
@@ -175,7 +175,7 @@ export const HistoryView: React.FC = () => {
               setEditingTransaction(null);
               setIsAddModalOpen(true);
             }}
-            className="px-3.5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-bold flex items-center gap-1.5 transition-colors shadow-md shadow-emerald-950/30"
+            className="flex-1 sm:flex-initial px-3.5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-bold flex items-center justify-center gap-1.5 transition-colors shadow-md shadow-emerald-950/30"
           >
             <Plus className="w-3.5 h-3.5 stroke-[3]" />
             Novo Registro
@@ -231,21 +231,24 @@ export const HistoryView: React.FC = () => {
 
         {/* Custom date range inputs when 'custom' selected */}
         {dateFilter === 'custom' && (
-          <div className="flex items-center gap-2 p-3 rounded-xl bg-[#121622] border border-white/10 animate-in fade-in duration-150">
-            <Calendar className="w-4 h-4 text-emerald-400 shrink-0" />
-            <div className="flex items-center gap-2 text-xs flex-1">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 p-3 rounded-xl bg-[#121622] border border-white/10 animate-in fade-in duration-150">
+            <div className="flex items-center gap-1.5 text-xs text-emerald-400 font-semibold shrink-0">
+              <Calendar className="w-4 h-4" />
+              <span>Data personalizada:</span>
+            </div>
+            <div className="flex flex-col xs:flex-row items-stretch xs:items-center gap-2 text-xs flex-1">
               <input
                 type="date"
                 value={customStartDate}
                 onChange={(e) => setCustomStartDate(e.target.value)}
-                className="w-full px-2 py-1 rounded bg-black/40 border border-white/10 text-white focus:outline-none"
+                className="w-full px-2.5 py-1.5 rounded-lg bg-black/40 border border-white/10 text-white focus:outline-none"
               />
-              <span className="text-slate-500">até</span>
+              <span className="text-slate-500 text-center">até</span>
               <input
                 type="date"
                 value={customEndDate}
                 onChange={(e) => setCustomEndDate(e.target.value)}
-                className="w-full px-2 py-1 rounded bg-black/40 border border-white/10 text-white focus:outline-none"
+                className="w-full px-2.5 py-1.5 rounded-lg bg-black/40 border border-white/10 text-white focus:outline-none"
               />
             </div>
           </div>
