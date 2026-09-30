@@ -85,8 +85,65 @@ export const getCurrentTimeString = (): string => {
   return `${hours}:${minutes}`;
 };
 
+// Route & tab mapping helpers
+const TAB_ROUTES: Record<ViewTab, string> = {
+  dashboard: '/dashboard',
+  history: '/historico',
+  analytics: '/resumo',
+  calendar: '/calendario',
+  'fixed-bills': '/contas',
+  categories: '/categorias',
+  profile: '/perfil',
+};
+
+const getInitialTabFromLocation = (): ViewTab => {
+  if (typeof window === 'undefined') return 'dashboard';
+  const path = window.location.pathname.toLowerCase().replace(/\/+$/, '') || '/';
+  const params = new URLSearchParams(window.location.search);
+  const tabParam = params.get('tab') as ViewTab | null;
+
+  if (tabParam && ['dashboard', 'history', 'analytics', 'calendar', 'fixed-bills', 'categories', 'profile'].includes(tabParam)) {
+    return tabParam;
+  }
+
+  if (path === '/history' || path === '/historico' || path === '/gastos') return 'history';
+  if (path === '/analytics' || path === '/resumo' || path === '/receitas') return 'analytics';
+  if (path === '/calendar' || path === '/calendario') return 'calendar';
+  if (path === '/fixed-bills' || path === '/contas' || path === '/contas-fixas') return 'fixed-bills';
+  if (path === '/categories' || path === '/categorias') return 'categories';
+  if (path === '/profile' || path === '/perfil' || path === '/configuracoes' || path === '/aplicativo') return 'profile';
+
+  return 'dashboard';
+};
+
+const shouldOpenAddModalFromUrl = (): boolean => {
+  if (typeof window === 'undefined') return false;
+  const params = new URLSearchParams(window.location.search);
+  return params.get('action') === 'add-expense' || params.get('action') === 'add';
+};
+
 export const FinanceProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [activeTab, setActiveTab] = useState<ViewTab>('dashboard');
+  const [activeTab, setActiveTabState] = useState<ViewTab>(() => getInitialTabFromLocation());
+
+  // Function to set active tab and update browser history URL smoothly
+  const setActiveTab = (tab: ViewTab) => {
+    setActiveTabState(tab);
+    if (typeof window !== 'undefined') {
+      const targetPath = TAB_ROUTES[tab] || '/dashboard';
+      if (window.location.pathname !== targetPath) {
+        window.history.pushState({ tab }, '', targetPath);
+      }
+    }
+  };
+
+  // Sync tab with browser popstate (back / forward navigation)
+  useEffect(() => {
+    const handlePopState = () => {
+      setActiveTabState(getInitialTabFromLocation());
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
   const [profiles, setProfiles] = useState<UserProfile[]>(() => {
     const saved = localStorage.getItem('finan_profiles');
     if (saved) {
@@ -163,7 +220,7 @@ export const FinanceProvider: React.FC<{ children: ReactNode }> = ({ children })
 
   // UI state
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState<boolean>(() => shouldOpenAddModalFromUrl());
   const [isAccountModalOpen, setIsAccountModalOpen] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
   const [presetPreload, setPresetPreload] = useState<{ categoryId?: string; amount?: number; description?: string } | null>(null);

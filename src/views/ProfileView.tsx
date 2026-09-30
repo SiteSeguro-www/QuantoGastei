@@ -24,6 +24,7 @@ import {
 } from 'lucide-react';
 import { useFinance } from '../context/FinanceContext';
 import { UserProfile } from '../types/finance';
+import { PWAInstallSection } from '../components/PWAInstallSection';
 
 export const ProfileView: React.FC = () => {
   const {
@@ -236,6 +237,9 @@ export const ProfileView: React.FC = () => {
           })}
         </div>
       </div>
+
+      {/* PWA Application Installation Section */}
+      <PWAInstallSection />
 
       {/* Security & Privacy Notice */}
       <div className="p-4 rounded-2xl bg-emerald-950/20 border border-emerald-500/20 flex items-start gap-3">

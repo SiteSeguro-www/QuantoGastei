@@ -12,6 +12,8 @@ import { FixedBillsView } from './views/FixedBillsView';
 import { CategoriesView } from './views/CategoriesView';
 import { ProfileView } from './views/ProfileView';
 import { Users, ChevronDown, Plus } from 'lucide-react';
+import { OfflineIndicator, PWAUpdateNotification } from './components/PWAPrompts';
+import { PWACompactInstallButton } from './components/PWAInstallSection';
 
 const AppContent: React.FC = () => {
   const {
@@ -49,6 +51,10 @@ const AppContent: React.FC = () => {
       {/* Toast notifications */}
       <ToastContainer />
 
+      {/* PWA offline & update banners */}
+      <OfflineIndicator />
+      <PWAUpdateNotification />
+
       {/* Desktop Sidebar (visible on md+) */}
       <DesktopSidebar />
 
@@ -63,20 +69,25 @@ const AppContent: React.FC = () => {
           </span>
         </div>
 
-        {/* Quick Account Switcher Button */}
-        <button
-          onClick={() => setIsAccountModalOpen(true)}
-          className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 active:scale-95 transition-all shrink-0 max-w-[170px]"
-          title="Alternar conta ou adicionar novo usuário"
-        >
-          <div className="w-5 h-5 rounded-md bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-[11px] font-extrabold shrink-0">
-            {activeProfile.name.charAt(0).toUpperCase()}
-          </div>
-          <span className="text-xs font-semibold text-slate-200 truncate">
-            {activeProfile.name}
-          </span>
-          <ChevronDown className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-        </button>
+        <div className="flex items-center gap-1.5 shrink-0">
+          {/* Quick Install Button for mobile if not yet installed */}
+          <PWACompactInstallButton className="hidden xs:flex" />
+
+          {/* Quick Account Switcher Button */}
+          <button
+            onClick={() => setIsAccountModalOpen(true)}
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 active:scale-95 transition-all shrink-0 max-w-[150px]"
+            title="Alternar conta ou adicionar novo usuário"
+          >
+            <div className="w-5 h-5 rounded-md bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-[11px] font-extrabold shrink-0">
+              {activeProfile.name.charAt(0).toUpperCase()}
+            </div>
+            <span className="text-xs font-semibold text-slate-200 truncate">
+              {activeProfile.name}
+            </span>
+            <ChevronDown className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+          </button>
+        </div>
       </header>
 
       {/* Main Content Area */}

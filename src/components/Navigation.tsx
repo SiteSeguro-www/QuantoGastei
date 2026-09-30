@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { useFinance } from '../context/FinanceContext';
 import { ViewTab } from '../types/finance';
+import { PWACompactInstallButton } from './PWAInstallSection';
 
 export const MobileBottomNav: React.FC = () => {
   const { activeTab, setActiveTab, setIsAddModalOpen, setEditingTransaction } = useFinance();
@@ -124,18 +125,21 @@ export const DesktopSidebar: React.FC = () => {
   return (
     <aside className="hidden md:flex flex-col w-64 h-screen sticky top-0 shrink-0 bg-[#0C101A] border-r border-white/[0.08] p-4 select-none">
       {/* Brand header */}
-      <div className="flex items-center gap-2.5 px-3 py-2 mb-4">
-        <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-slate-950 font-black shadow-md shadow-emerald-950/40">
-          <Sparkles className="w-5 h-5" />
+      <div className="flex items-center justify-between px-2 py-2 mb-4">
+        <div className="flex items-center gap-2.5">
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-slate-950 font-black shadow-md shadow-emerald-950/40">
+            <Sparkles className="w-5 h-5" />
+          </div>
+          <div>
+            <span className="text-base font-extrabold text-white tracking-tight block">
+              QuantoGastei
+            </span>
+            <span className="text-[11px] text-slate-400 block -mt-0.5">
+              Controle Pessoal
+            </span>
+          </div>
         </div>
-        <div>
-          <span className="text-base font-extrabold text-white tracking-tight block">
-            QuantoGastei
-          </span>
-          <span className="text-[11px] text-slate-400 block -mt-0.5">
-            Controle Pessoal
-          </span>
-        </div>
+        <PWACompactInstallButton />
       </div>
 
       {/* Main Action Button */}
