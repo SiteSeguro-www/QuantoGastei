@@ -179,7 +179,11 @@ export const FinanceProvider: React.FC<{ children: ReactNode }> = ({ children })
         // fallback
       }
     }
-    return INITIAL_TRANSACTIONS.map((tx) => ({ ...tx, profileId: activeProfileId }));
+    // Only load initial demo transactions for the default demo profile if no saved data
+    if (activeProfileId === DEFAULT_PROFILES[0].id) {
+      return INITIAL_TRANSACTIONS.map((tx) => ({ ...tx, profileId: activeProfileId }));
+    }
+    return [];
   });
 
   // Load categories
@@ -205,17 +209,16 @@ export const FinanceProvider: React.FC<{ children: ReactNode }> = ({ children })
     if (saved) {
       try {
         const parsed: FixedBill[] = JSON.parse(saved);
-        // Ensure essential bills (agua, luz, telefone, internet, tv_cabo) are present
-        const existingIds = new Set(parsed.map((b) => b.id));
-        const missingDefaults = INITIAL_FIXED_BILLS
-          .filter((b) => !existingIds.has(b.id))
-          .map((b) => ({ ...b, profileId: activeProfileId }));
-        return [...parsed, ...missingDefaults];
+        return parsed;
       } catch {
         // fallback
       }
     }
-    return INITIAL_FIXED_BILLS.map((b) => ({ ...b, profileId: activeProfileId }));
+    // Only load initial demo bills for the default demo profile
+    if (activeProfileId === DEFAULT_PROFILES[0].id) {
+      return INITIAL_FIXED_BILLS.map((b) => ({ ...b, profileId: activeProfileId }));
+    }
+    return [];
   });
 
   // UI state
@@ -254,7 +257,11 @@ export const FinanceProvider: React.FC<{ children: ReactNode }> = ({ children })
         setTransactions([]);
       }
     } else {
-      setTransactions(INITIAL_TRANSACTIONS.map((tx) => ({ ...tx, profileId })));
+      if (profileId === DEFAULT_PROFILES[0].id) {
+        setTransactions(INITIAL_TRANSACTIONS.map((tx) => ({ ...tx, profileId })));
+      } else {
+        setTransactions([]);
+      }
     }
 
     const savedCats = localStorage.getItem(`finan_cats_${profileId}`);
@@ -276,27 +283,75 @@ export const FinanceProvider: React.FC<{ children: ReactNode }> = ({ children })
         setFixedBills([]);
       }
     } else {
-      setFixedBills(INITIAL_FIXED_BILLS.map((b) => ({ ...b, profileId })));
+      if (profileId === DEFAULT_PROFILES[0].id) {
+        setFixedBills(INITIAL_FIXED_BILLS.map((b) => ({ ...b, profileId })));
+      } else {
+        setFixedBills([]);
+      }
     }
 
     showToast(`Perfil alterado para ${profiles.find((p) => p.id === profileId)?.name || 'Perfil'}`, 'info');
   };
 
   // Add new profile / account
-  const addProfile = (name: string, monthlyIncomeGoal: number = 4500): UserProfile => {
+  const addProfile = (name: string, monthlyIncomeGoal: number = 0): UserProfile => {
     const trimmed = name.trim();
+    const newProfileId = `user_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
+    const parsedIncome = Number(monthlyIncomeGoal) || 0;
+
     const newProfile: UserProfile = {
-      id: `user_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+      id: newProfileId,
       name: trimmed,
       email: `${trimmed.toLowerCase().replace(/[^a-z0-9]/g, '')}@quantogastei.app`,
       avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
       currency: 'BRL',
-      monthlyIncomeGoal,
+      monthlyIncomeGoal: parsedIncome,
     };
 
-    setProfiles((prev) => [...prev, newProfile]);
-    switchProfile(newProfile.id);
-    showToast(`✓ Conta "${trimmed}" criada e ativada!`, 'success');
+    // If an initial monthly income was specified, register it directly as an income entry
+    const initialTxs: Transaction[] = [];
+    if (parsedIncome > 0) {
+      initialTxs.push({
+        id: `tx_${Date.now()}_income`,
+        profileId: newProfileId,
+        type: 'income',
+        amount: parsedIncome,
+        categoryId: 'salario',
+        categoryName: 'Salário / Renda',
+        categoryIcon: 'Coins',
+        categoryColor: '#10B981',
+        description: 'Renda Mensal informada',
+        date: getTodayString(),
+        time: getCurrentTimeString(),
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      });
+    }
+
+    // Save completely clean state for this new account in local storage
+    localStorage.setItem(`finan_tx_${newProfileId}`, JSON.stringify(initialTxs));
+    localStorage.setItem(`finan_bills_${newProfileId}`, JSON.stringify([]));
+    localStorage.setItem(`finan_cats_${newProfileId}`, JSON.stringify(DEFAULT_CATEGORIES));
+    localStorage.setItem('finan_active_profile_id', newProfileId);
+
+    // Update state directly
+    setProfiles((prev) => {
+      const updated = [...prev, newProfile];
+      localStorage.setItem('finan_profiles', JSON.stringify(updated));
+      return updated;
+    });
+
+    setActiveProfileId(newProfileId);
+    setTransactions(initialTxs);
+    setFixedBills([]);
+    setCategories(DEFAULT_CATEGORIES);
+
+    showToast(
+      parsedIncome > 0
+        ? `✓ Conta "${trimmed}" criada com R$ ${parsedIncome.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} de renda e dados limpos!`
+        : `✓ Conta "${trimmed}" criada com dados limpos!`,
+      'success'
+    );
     return newProfile;
   };
 

@@ -43,7 +43,7 @@ export const AnalyticsView: React.FC = () => {
 
   const totalIncome = useMemo(() => {
     const directIncome = incomeTransactions.reduce((acc, t) => acc + t.amount, 0);
-    return directIncome > 0 ? directIncome : (activeProfile.monthlyIncomeGoal || 4500);
+    return directIncome > 0 ? directIncome : (activeProfile.monthlyIncomeGoal || 0);
   }, [incomeTransactions, activeProfile]);
 
   const netBalance = totalIncome - totalExpense;

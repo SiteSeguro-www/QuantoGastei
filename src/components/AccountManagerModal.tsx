@@ -33,7 +33,7 @@ export const AccountManagerModal: React.FC<AccountManagerModalProps> = ({
 
   const [isCreating, setIsCreating] = useState(false);
   const [newAccountName, setNewAccountName] = useState('');
-  const [newAccountIncome, setNewAccountIncome] = useState('4500');
+  const [newAccountIncome, setNewAccountIncome] = useState('');
 
   // Deletion state
   const [accountToDelete, setAccountToDelete] = useState<UserProfile | null>(null);
@@ -44,10 +44,13 @@ export const AccountManagerModal: React.FC<AccountManagerModalProps> = ({
     e.preventDefault();
     if (!newAccountName.trim()) return;
 
-    const incomeGoal = parseFloat(newAccountIncome.replace(',', '.')) || 4500;
+    const rawIncome = newAccountIncome.trim().replace(',', '.');
+    const incomeGoal = rawIncome === '' ? 0 : (parseFloat(rawIncome) || 0);
     addProfile(newAccountName.trim(), incomeGoal);
     setNewAccountName('');
+    setNewAccountIncome('');
     setIsCreating(false);
+    onClose();
   };
 
   const handleConfirmDelete = () => {
@@ -151,7 +154,7 @@ export const AccountManagerModal: React.FC<AccountManagerModalProps> = ({
                   <input
                     type="number"
                     step="0.01"
-                    placeholder="4500,00"
+                    placeholder="Ex: 5000,00 ou deixe em branco"
                     value={newAccountIncome}
                     onChange={(e) => setNewAccountIncome(e.target.value)}
                     className="w-full pl-9 pr-3 py-2 text-sm rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 font-mono"

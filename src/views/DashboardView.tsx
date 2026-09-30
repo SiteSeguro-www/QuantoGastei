@@ -31,6 +31,7 @@ export const DashboardView: React.FC = () => {
     setIsAccountModalOpen,
     todayExpenses,
     monthExpenses,
+    monthIncome,
     totalFixedBillsAmount,
     availableBalance,
     upcomingBills,
@@ -81,9 +82,14 @@ export const DashboardView: React.FC = () => {
               Olá {activeProfile.name} 👋
             </h1>
           </div>
-          <p className="text-xs sm:text-sm text-slate-400 mt-0.5 sm:mt-1">
-            Como estão suas finanças hoje?
-          </p>
+          <div className="flex items-center gap-2 mt-1">
+            <span className="text-xs text-slate-400">
+              Renda mensal da conta:{' '}
+              <strong className="text-emerald-400 font-bold font-mono-nums">
+                {formatCurrency(monthIncome > 0 ? monthIncome : (activeProfile.monthlyIncomeGoal || 0))}
+              </strong>
+            </span>
+          </div>
         </div>
 
         {/* Profile / Account switcher & New Account Action */}
@@ -118,21 +124,39 @@ export const DashboardView: React.FC = () => {
 
       {/* 4 Main Summary Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 xs:gap-2.5 sm:gap-4">
-        {/* Gastos de Hoje */}
-        <div className="p-3 xs:p-3.5 sm:p-5 rounded-2xl bg-[#121622]/90 border border-white/[0.07] relative overflow-hidden group hover:border-white/15 transition-all min-w-0">
+        {/* Saldo Disponível */}
+        <div className="p-3 xs:p-3.5 sm:p-5 rounded-2xl bg-[#121622]/90 border border-emerald-500/30 relative overflow-hidden group hover:border-emerald-500/50 transition-all glow-emerald min-w-0">
           <div className="flex items-center justify-between mb-1.5 sm:mb-2">
-            <span className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider text-slate-400 truncate">
-              Gastos de Hoje
+            <span className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider text-emerald-400 truncate">
+              Saldo Disponível
             </span>
-            <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-rose-500/15 border border-rose-500/20 flex items-center justify-center text-rose-400 shrink-0">
-              <TrendingDown className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+            <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0">
+              <Wallet className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </div>
           </div>
-          <div className="font-mono-nums text-sm xs:text-base sm:text-2xl font-extrabold text-rose-400 tracking-tight truncate">
-            {formatCurrency(todayExpenses)}
+          <div className="font-mono-nums text-sm xs:text-base sm:text-2xl font-extrabold text-emerald-400 tracking-tight truncate">
+            {formatCurrency(availableBalance)}
+          </div>
+          <span className="text-[10px] sm:text-[11px] text-emerald-400/80 mt-1 block truncate">
+            {monthExpenses > 0 ? 'Saldo líquido atual' : 'Pronto para uso'}
+          </span>
+        </div>
+
+        {/* Renda Mensal / Entradas */}
+        <div className="p-3 xs:p-3.5 sm:p-5 rounded-2xl bg-[#121622]/90 border border-white/[0.07] relative overflow-hidden group hover:border-white/15 transition-all min-w-0">
+          <div className="flex items-center justify-between mb-1.5 sm:mb-2">
+            <span className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider text-teal-400 truncate">
+              Renda Mensal
+            </span>
+            <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-teal-500/15 border border-teal-500/20 flex items-center justify-center text-teal-400 shrink-0">
+              <ArrowUpRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+            </div>
+          </div>
+          <div className="font-mono-nums text-sm xs:text-base sm:text-2xl font-extrabold text-teal-300 tracking-tight truncate">
+            {formatCurrency(monthIncome > 0 ? monthIncome : (activeProfile.monthlyIncomeGoal || 0))}
           </div>
           <span className="text-[10px] sm:text-[11px] text-slate-500 mt-1 block truncate">
-            {todayTransactions.length} {todayTransactions.length === 1 ? 'registro' : 'registros'} hoje
+            {monthIncome > 0 ? 'Entradas registradas' : 'Renda cadastrada'}
           </span>
         </div>
 
@@ -154,41 +178,40 @@ export const DashboardView: React.FC = () => {
           </span>
         </div>
 
-        {/* Total de Contas */}
+        {/* Gastos de Hoje */}
         <div className="p-3 xs:p-3.5 sm:p-5 rounded-2xl bg-[#121622]/90 border border-white/[0.07] relative overflow-hidden group hover:border-white/15 transition-all min-w-0">
           <div className="flex items-center justify-between mb-1.5 sm:mb-2">
             <span className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider text-slate-400 truncate">
-              Total de Contas
+              Gastos de Hoje
             </span>
-            <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-sky-500/15 border border-sky-500/20 flex items-center justify-center text-sky-400 shrink-0">
-              <CreditCard className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+            <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-rose-500/15 border border-rose-500/20 flex items-center justify-center text-rose-400 shrink-0">
+              <TrendingDown className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </div>
           </div>
-          <div className="font-mono-nums text-sm xs:text-base sm:text-2xl font-extrabold text-slate-200 tracking-tight truncate">
-            {formatCurrency(totalFixedBillsAmount)}
+          <div className="font-mono-nums text-sm xs:text-base sm:text-2xl font-extrabold text-rose-400 tracking-tight truncate">
+            {formatCurrency(todayExpenses)}
           </div>
           <span className="text-[10px] sm:text-[11px] text-slate-500 mt-1 block truncate">
-            {upcomingBills.length} a vencer
+            {todayTransactions.length} {todayTransactions.length === 1 ? 'registro' : 'registros'} hoje
           </span>
         </div>
+      </div>
 
-        {/* Saldo Disponível */}
-        <div className="p-3 xs:p-3.5 sm:p-5 rounded-2xl bg-[#121622]/90 border border-emerald-500/20 relative overflow-hidden group hover:border-emerald-500/40 transition-all glow-emerald min-w-0">
-          <div className="flex items-center justify-between mb-1.5 sm:mb-2">
-            <span className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider text-emerald-400 truncate">
-              Saldo Disponível
-            </span>
-            <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0">
-              <Wallet className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-            </div>
-          </div>
-          <div className="font-mono-nums text-sm xs:text-base sm:text-2xl font-extrabold text-emerald-400 tracking-tight truncate">
-            {formatCurrency(availableBalance)}
-          </div>
-          <span className="text-[10px] sm:text-[11px] text-emerald-400/70 mt-1 block truncate">
-            Saldo livre
-          </span>
+      {/* Quick Fixed Bills Overview Bar */}
+      <div className="flex flex-wrap items-center justify-between gap-2 p-3 rounded-2xl bg-[#121622]/60 border border-white/[0.05] text-xs">
+        <div className="flex items-center gap-2 min-w-0">
+          <CreditCard className="w-4 h-4 text-sky-400 shrink-0" />
+          <span className="text-slate-400">Contas fixas:</span>
+          <strong className="text-white font-mono-nums">{formatCurrency(totalFixedBillsAmount)}</strong>
+          <span className="text-slate-500 text-[11px]">({upcomingBills.length} a vencer)</span>
         </div>
+        <button
+          onClick={() => setActiveTab('fixed-bills')}
+          className="text-sky-400 hover:text-sky-300 font-semibold text-xs flex items-center gap-1 transition-colors"
+        >
+          <span>Gerenciar contas</span>
+          <ChevronRight className="w-3.5 h-3.5" />
+        </button>
       </div>
 
       {/* Primary "+ Adicionar gasto" Button (Prominent Call to Action) */}
