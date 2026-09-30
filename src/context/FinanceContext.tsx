@@ -190,14 +190,39 @@ export const FinanceProvider: React.FC<{ children: ReactNode }> = ({ children })
     return localStorage.getItem('finan_active_profile_id') || DEFAULT_PROFILES[0].id;
   });
 
+  const [monthCycleStartDay, setMonthCycleStartDay] = useState<number>(() => {
+    const saved = localStorage.getItem(`finan_cycle_${activeProfileId}`);
+    if (saved) {
+      const num = parseInt(saved, 10);
+      if (!isNaN(num) && num >= 1 && num <= 31) return num;
+    }
+    const prof = profiles.find((p) => p.id === activeProfileId);
+    return prof?.monthCycleStartDay || 1;
+  });
+
   // Sync profiles to localStorage whenever updated
   useEffect(() => {
     localStorage.setItem('finan_profiles', JSON.stringify(profiles));
   }, [profiles]);
 
+  // Keep monthCycleStartDay in sync when active profile changes
+  useEffect(() => {
+    const saved = localStorage.getItem(`finan_cycle_${activeProfileId}`);
+    if (saved) {
+      const num = parseInt(saved, 10);
+      if (!isNaN(num) && num >= 1 && num <= 31) {
+        setMonthCycleStartDay(num);
+        return;
+      }
+    }
+    const prof = profiles.find((p) => p.id === activeProfileId);
+    setMonthCycleStartDay(prof?.monthCycleStartDay || 1);
+  }, [activeProfileId, profiles]);
+
   const activeProfile = useMemo(() => {
-    return profiles.find((p) => p.id === activeProfileId) || profiles[0];
-  }, [profiles, activeProfileId]);
+    const p = profiles.find((p) => p.id === activeProfileId) || profiles[0];
+    return { ...p, monthCycleStartDay };
+  }, [profiles, activeProfileId, monthCycleStartDay]);
 
   // Load transactions for active profile
   const [transactions, setTransactions] = useState<Transaction[]>(() => {
@@ -394,14 +419,24 @@ export const FinanceProvider: React.FC<{ children: ReactNode }> = ({ children })
   };
 
   // Update Month Cycle Start Day for current active profile
-  const monthCycleStartDay = activeProfile?.monthCycleStartDay || 1;
   const updateMonthCycleStartDay = (startDay: number) => {
     const safeDay = Math.max(1, Math.min(31, Math.floor(startDay || 1)));
+    
+    // 1. Update state immediately
+    setMonthCycleStartDay(safeDay);
+
+    // 2. Persist per-profile key
+    saveToCache(`finan_cycle_${activeProfileId}`, safeDay);
+    localStorage.setItem(`finan_cycle_${activeProfileId}`, String(safeDay));
+
+    // 3. Update profiles array
     setProfiles((prev) => {
       const updated = prev.map((p) => (p.id === activeProfileId ? { ...p, monthCycleStartDay: safeDay } : p));
       saveToCache('finan_profiles', updated);
+      localStorage.setItem('finan_profiles', JSON.stringify(updated));
       return updated;
     });
+
     showToast(
       safeDay === 1
         ? `✓ Ciclo do mês redefinido para o Mês Calendário (dia 1 ao final do mês)`
@@ -592,9 +627,8 @@ export const FinanceProvider: React.FC<{ children: ReactNode }> = ({ children })
 
   // Calculated Month Cycle Boundaries
   const cycleInfo = useMemo(() => {
-    const startDay = activeProfile?.monthCycleStartDay || 1;
-    return calculateMonthCycle(startDay);
-  }, [activeProfile?.monthCycleStartDay]);
+    return calculateMonthCycle(monthCycleStartDay);
+  }, [monthCycleStartDay]);
 
   // Calculated Metrics
   const todayStr = useMemo(() => getTodayString(), []);
