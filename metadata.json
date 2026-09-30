@@ -1,0 +1,6 @@
+{
+  "name": "Meu Financeiro - Controle Financeiro Pessoal",
+  "description": "Aplicativo moderno e premium de controle financeiro pessoal. Registre todos os seus gastos do dia a dia, acompanhe contas, orçamentos, gráficos e insights com foco em celular.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
