@@ -50,6 +50,8 @@ export const FixedBillsView: React.FC = () => {
   };
 
   const UTILITY_TEMPLATES = [
+    { name: 'Condomínio do Edifício', amount: 380.00, dueDay: 10, categoryId: 'cat_condominio', label: 'Condomínio', emoji: '🏢' },
+    { name: 'Aluguel do Imóvel', amount: 1200.00, dueDay: 10, categoryId: 'cat_aluguel', label: 'Aluguel', emoji: '🔑' },
     { name: 'Conta de Água (Saneamento)', amount: 78.50, dueDay: 12, categoryId: 'cat_agua', label: 'Água', emoji: '💧' },
     { name: 'Conta de Luz (Energia Elétrica)', amount: 143.20, dueDay: 5, categoryId: 'cat_luz', label: 'Luz', emoji: '⚡' },
     { name: 'Conta de Telefone / Celular', amount: 69.90, dueDay: 15, categoryId: 'cat_telefone', label: 'Telefone', emoji: '📱' },

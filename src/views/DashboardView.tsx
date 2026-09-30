@@ -22,6 +22,8 @@ import { TransactionItem } from '../components/TransactionItem';
 import { DeleteConfirmModal } from '../components/DeleteConfirmModal';
 import { Transaction } from '../types/finance';
 import { CategoryIcon } from '../components/CategoryIcon';
+import { MonthCycleModal } from '../components/MonthCycleModal';
+import { ShieldCheck, Database } from 'lucide-react';
 
 export const DashboardView: React.FC = () => {
   const {
@@ -36,6 +38,8 @@ export const DashboardView: React.FC = () => {
     availableBalance,
     upcomingBills,
     transactions,
+    cycleInfo,
+    cacheStatus,
     setIsAddModalOpen,
     setEditingTransaction,
     setPresetPreload,
@@ -46,6 +50,7 @@ export const DashboardView: React.FC = () => {
 
   // Delete modal state
   const [txToDelete, setTxToDelete] = useState<Transaction | null>(null);
+  const [isMonthCycleModalOpen, setIsMonthCycleModalOpen] = useState(false);
 
   const todayStr = getTodayString();
   const yesterday = new Date();
@@ -118,6 +123,58 @@ export const DashboardView: React.FC = () => {
           >
             <UserPlus className="w-3.5 h-3.5" />
             <span>+ Nova Conta</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Interactive Month Cycle & Countdown Card (Contagem do Mês) */}
+      <div className="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-[#121828] via-[#101524] to-[#0D121D] border border-emerald-500/25 shadow-lg shadow-emerald-950/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0">
+            <Clock className="w-5 h-5" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-xs sm:text-sm font-bold text-white">
+                Contagem do Mês:{' '}
+                <strong className="text-emerald-400 font-extrabold">{cycleInfo.cycleLabel}</strong>
+              </span>
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                {cycleInfo.daysRemaining === 0
+                  ? 'Último dia do ciclo hoje!'
+                  : `Faltam ${cycleInfo.daysRemaining} ${cycleInfo.daysRemaining === 1 ? 'dia' : 'dias'} para fechar`}
+              </span>
+            </div>
+            
+            {/* Progress bar and day counter */}
+            <div className="flex items-center gap-2.5 mt-1.5 max-w-md">
+              <div className="flex-1 h-1.5 rounded-full bg-white/10 overflow-hidden">
+                <div
+                  className="h-full bg-gradient-to-r from-emerald-500 to-teal-400 rounded-full transition-all duration-500"
+                  style={{ width: `${cycleInfo.percentageElapsed}%` }}
+                />
+              </div>
+              <span className="text-[10px] font-mono text-slate-400 shrink-0">
+                Dia {cycleInfo.currentDayInCycle}/{cycleInfo.totalDaysInCycle} ({cycleInfo.percentageElapsed}%)
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Action button to change cycle start day & Cache status */}
+        <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
+          <div className="hidden lg:flex items-center gap-1 text-[11px] text-slate-500 mr-1" title="Sistema de salvamento local ativo">
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+            <span>Cache seguro</span>
+          </div>
+
+          <button
+            onClick={() => setIsMonthCycleModalOpen(true)}
+            className="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-emerald-500/40 text-emerald-300 text-xs font-semibold flex items-center gap-1.5 transition-all active:scale-95 shadow-sm"
+            title="Alterar dia em que seu mês financeiro começa e termina"
+          >
+            <Calendar className="w-3.5 h-3.5 text-emerald-400" />
+            <span>Alterar Ciclo do Mês</span>
           </button>
         </div>
       </div>
@@ -411,6 +468,12 @@ export const DashboardView: React.FC = () => {
         transaction={txToDelete}
         isOpen={!!txToDelete}
         onClose={() => setTxToDelete(null)}
+      />
+
+      {/* Custom Month Cycle Modal */}
+      <MonthCycleModal
+        isOpen={isMonthCycleModalOpen}
+        onClose={() => setIsMonthCycleModalOpen(false)}
       />
     </div>
   );

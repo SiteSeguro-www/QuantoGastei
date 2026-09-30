@@ -47,6 +47,21 @@ export interface UserProfile {
   avatar: string;
   currency: 'BRL' | 'USD' | 'EUR';
   monthlyIncomeGoal: number;
+  monthCycleStartDay?: number; // 1 to 31 (day of the month when financial cycle begins, default 1)
+}
+
+export interface MonthCycleInfo {
+  startDay: number;
+  startDate: string; // YYYY-MM-DD
+  endDate: string; // YYYY-MM-DD
+  startFormatted: string; // DD/MM
+  endFormatted: string; // DD/MM
+  daysRemaining: number;
+  totalDaysInCycle: number;
+  currentDayInCycle: number;
+  percentageElapsed: number;
+  cycleLabel: string;
+  isCustomCycle: boolean;
 }
 
 export type ViewTab = 'landing' | 'dashboard' | 'history' | 'analytics' | 'calendar' | 'fixed-bills' | 'categories' | 'profile';

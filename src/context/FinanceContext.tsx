@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useState, useEffect, useMemo, ReactNode } from 'react';
-import { Category, FixedBill, Transaction, UserProfile, ViewTab } from '../types/finance';
+import { Category, FixedBill, MonthCycleInfo, Transaction, UserProfile, ViewTab } from '../types/finance';
 import { DEFAULT_CATEGORIES, DEFAULT_PROFILES, INITIAL_FIXED_BILLS, INITIAL_TRANSACTIONS } from '../data/initialData';
+import { calculateMonthCycle, isDateInCycle } from '../utils/cycleHelper';
+import { getCacheStatus, loadFromCache, saveToCache } from '../utils/storageCache';
 
 export interface ToastMessage {
   id: number;
@@ -14,7 +16,7 @@ interface FinanceContextType {
   activeProfile: UserProfile;
   profiles: UserProfile[];
   switchProfile: (profileId: string) => void;
-  addProfile: (name: string, monthlyIncomeGoal?: number) => UserProfile;
+  addProfile: (name: string, monthlyIncomeGoal?: number, monthCycleStartDay?: number) => UserProfile;
   deleteProfile: (profileId: string) => boolean;
   transactions: Transaction[];
   categories: Category[];
@@ -22,6 +24,14 @@ interface FinanceContextType {
   toasts: ToastMessage[];
   showToast: (message: string, type?: 'success' | 'info' | 'error') => void;
   removeToast: (id: number) => void;
+
+  // Month cycle configuration
+  monthCycleStartDay: number;
+  updateMonthCycleStartDay: (startDay: number) => void;
+  cycleInfo: MonthCycleInfo;
+
+  // Cache System
+  cacheStatus: ReturnType<typeof getCacheStatus>;
 
   // Actions
   addTransaction: (data: Omit<Transaction, 'id' | 'createdAt' | 'updatedAt' | 'profileId'>) => void;
@@ -231,25 +241,31 @@ export const FinanceProvider: React.FC<{ children: ReactNode }> = ({ children })
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
   const [presetPreload, setPresetPreload] = useState<{ categoryId?: string; amount?: number; description?: string } | null>(null);
 
-  // Sync to localStorage whenever transactions change
+  // Sync to localStorage and cache whenever transactions change
   useEffect(() => {
-    localStorage.setItem(`finan_tx_${activeProfileId}`, JSON.stringify(transactions));
+    saveToCache(`finan_tx_${activeProfileId}`, transactions);
   }, [transactions, activeProfileId]);
 
   // Sync categories
   useEffect(() => {
-    localStorage.setItem(`finan_cats_${activeProfileId}`, JSON.stringify(categories));
+    saveToCache(`finan_cats_${activeProfileId}`, categories);
   }, [categories, activeProfileId]);
 
   // Sync fixed bills
   useEffect(() => {
-    localStorage.setItem(`finan_bills_${activeProfileId}`, JSON.stringify(fixedBills));
+    saveToCache(`finan_bills_${activeProfileId}`, fixedBills);
   }, [fixedBills, activeProfileId]);
+
+  // Cache Status
+  const [cacheStatus, setCacheStatus] = useState(() => getCacheStatus());
+  useEffect(() => {
+    setCacheStatus(getCacheStatus());
+  }, [transactions, categories, fixedBills, profiles, activeProfileId]);
 
   // Switch profile handler
   const switchProfile = (profileId: string) => {
     setActiveProfileId(profileId);
-    localStorage.setItem('finan_active_profile_id', profileId);
+    saveToCache('finan_active_profile_id', profileId);
 
     // Load data for new profile
     const savedTx = localStorage.getItem(`finan_tx_${profileId}`);
@@ -297,10 +313,11 @@ export const FinanceProvider: React.FC<{ children: ReactNode }> = ({ children })
   };
 
   // Add new profile / account
-  const addProfile = (name: string, monthlyIncomeGoal: number = 0): UserProfile => {
+  const addProfile = (name: string, monthlyIncomeGoal: number = 0, monthCycleStartDay: number = 1): UserProfile => {
     const trimmed = name.trim();
     const newProfileId = `user_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
     const parsedIncome = Number(monthlyIncomeGoal) || 0;
+    const parsedCycleDay = Math.max(1, Math.min(31, Number(monthCycleStartDay) || 1));
 
     const newProfile: UserProfile = {
       id: newProfileId,
@@ -309,6 +326,7 @@ export const FinanceProvider: React.FC<{ children: ReactNode }> = ({ children })
       avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
       currency: 'BRL',
       monthlyIncomeGoal: parsedIncome,
+      monthCycleStartDay: parsedCycleDay,
     };
 
     // If an initial monthly income was specified, register it directly as an income entry
@@ -332,15 +350,15 @@ export const FinanceProvider: React.FC<{ children: ReactNode }> = ({ children })
     }
 
     // Save completely clean state for this new account in local storage
-    localStorage.setItem(`finan_tx_${newProfileId}`, JSON.stringify(initialTxs));
-    localStorage.setItem(`finan_bills_${newProfileId}`, JSON.stringify([]));
-    localStorage.setItem(`finan_cats_${newProfileId}`, JSON.stringify(DEFAULT_CATEGORIES));
-    localStorage.setItem('finan_active_profile_id', newProfileId);
+    saveToCache(`finan_tx_${newProfileId}`, initialTxs);
+    saveToCache(`finan_bills_${newProfileId}`, []);
+    saveToCache(`finan_cats_${newProfileId}`, DEFAULT_CATEGORIES);
+    saveToCache('finan_active_profile_id', newProfileId);
 
     // Update state directly
     setProfiles((prev) => {
       const updated = [...prev, newProfile];
-      localStorage.setItem('finan_profiles', JSON.stringify(updated));
+      saveToCache('finan_profiles', updated);
       return updated;
     });
 
@@ -356,6 +374,23 @@ export const FinanceProvider: React.FC<{ children: ReactNode }> = ({ children })
       'success'
     );
     return newProfile;
+  };
+
+  // Update Month Cycle Start Day for current active profile
+  const monthCycleStartDay = activeProfile?.monthCycleStartDay || 1;
+  const updateMonthCycleStartDay = (startDay: number) => {
+    const safeDay = Math.max(1, Math.min(31, Math.floor(startDay || 1)));
+    setProfiles((prev) => {
+      const updated = prev.map((p) => (p.id === activeProfileId ? { ...p, monthCycleStartDay: safeDay } : p));
+      saveToCache('finan_profiles', updated);
+      return updated;
+    });
+    showToast(
+      safeDay === 1
+        ? `✓ Ciclo do mês redefinido para o Mês Calendário (dia 1 ao final do mês)`
+        : `✓ Ciclo do mês alterado: Inicia todo dia ${safeDay}`,
+      'success'
+    );
   };
 
   // Delete profile / account
@@ -538,9 +573,14 @@ export const FinanceProvider: React.FC<{ children: ReactNode }> = ({ children })
     }
   };
 
+  // Calculated Month Cycle Boundaries
+  const cycleInfo = useMemo(() => {
+    const startDay = activeProfile?.monthCycleStartDay || 1;
+    return calculateMonthCycle(startDay);
+  }, [activeProfile?.monthCycleStartDay]);
+
   // Calculated Metrics
   const todayStr = useMemo(() => getTodayString(), []);
-  const currentMonthYear = useMemo(() => todayStr.substring(0, 7), [todayStr]);
 
   const todayExpenses = useMemo(() => {
     return transactions
@@ -550,15 +590,15 @@ export const FinanceProvider: React.FC<{ children: ReactNode }> = ({ children })
 
   const monthExpenses = useMemo(() => {
     return transactions
-      .filter((tx) => tx.type === 'expense' && tx.date.startsWith(currentMonthYear) && tx.profileId === activeProfileId)
+      .filter((tx) => tx.type === 'expense' && isDateInCycle(tx.date, cycleInfo) && tx.profileId === activeProfileId)
       .reduce((acc, tx) => acc + tx.amount, 0);
-  }, [transactions, currentMonthYear, activeProfileId]);
+  }, [transactions, cycleInfo, activeProfileId]);
 
   const monthIncome = useMemo(() => {
     return transactions
-      .filter((tx) => tx.type === 'income' && tx.date.startsWith(currentMonthYear) && tx.profileId === activeProfileId)
+      .filter((tx) => tx.type === 'income' && isDateInCycle(tx.date, cycleInfo) && tx.profileId === activeProfileId)
       .reduce((acc, tx) => acc + tx.amount, 0);
-  }, [transactions, currentMonthYear, activeProfileId]);
+  }, [transactions, cycleInfo, activeProfileId]);
 
   const totalFixedBillsAmount = useMemo(() => {
     return fixedBills
@@ -568,7 +608,7 @@ export const FinanceProvider: React.FC<{ children: ReactNode }> = ({ children })
 
   // Balance = Month Income - Month Expenses (or if no income logged, based on income goal or real net)
   const availableBalance = useMemo(() => {
-    const base = monthIncome > 0 ? monthIncome : (activeProfile?.monthlyIncomeGoal || 4500);
+    const base = monthIncome > 0 ? monthIncome : (activeProfile?.monthlyIncomeGoal || 0);
     return base - monthExpenses;
   }, [monthIncome, monthExpenses, activeProfile]);
 
@@ -604,7 +644,7 @@ export const FinanceProvider: React.FC<{ children: ReactNode }> = ({ children })
   const exportDataCSV = (period = 'all') => {
     let list = transactions.filter((t) => t.profileId === activeProfileId);
     if (period === 'month') {
-      list = list.filter((t) => t.date.startsWith(currentMonthYear));
+      list = list.filter((t) => isDateInCycle(t.date, cycleInfo));
     }
 
     const headers = ['ID', 'Tipo', 'Categoria', 'Descrição', 'Valor (R$)', 'Data', 'Hora'];
@@ -703,6 +743,10 @@ export const FinanceProvider: React.FC<{ children: ReactNode }> = ({ children })
         updateFixedBill,
         deleteFixedBill,
         toggleBillPaid,
+        monthCycleStartDay,
+        updateMonthCycleStartDay,
+        cycleInfo,
+        cacheStatus,
         todayExpenses,
         monthExpenses,
         monthIncome,

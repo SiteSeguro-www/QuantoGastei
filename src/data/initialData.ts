@@ -20,7 +20,8 @@ export const DEFAULT_PROFILES: UserProfile[] = [
 ];
 
 export const DEFAULT_CATEGORIES: Category[] = [
-  // Fast food / snacks
+  // Fast food / delivery / snacks
+  { id: 'cat_ifood', name: 'iFood & Delivery', icon: 'ShoppingBag', emoji: '🛵', color: '#EA1D2C', type: 'expense' },
   { id: 'cat_mcdonalds', name: "McDonald's", icon: 'Utensils', emoji: '🍔', color: '#EF4444', type: 'expense' },
   { id: 'cat_pizza', name: 'Pizza', icon: 'Pizza', emoji: '🍕', color: '#F97316', type: 'expense' },
   { id: 'cat_chocolate', name: 'Chocolate', icon: 'Cookie', emoji: '🍫', color: '#854D0E', type: 'expense' },
@@ -29,10 +30,10 @@ export const DEFAULT_CATEGORIES: Category[] = [
   { id: 'cat_cafe', name: 'Café & Lanche', icon: 'Coffee', emoji: '☕', color: '#A16207', type: 'expense' },
   { id: 'cat_restaurante', name: 'Restaurante', icon: 'UtensilsCrossed', emoji: '🍽️', color: '#F43F5E', type: 'expense' },
 
-  // Supermarket & Home / Utility Bills
-  { id: 'cat_mercado', name: 'Supermercado', icon: 'ShoppingCart', emoji: '🛒', color: '#10B981', type: 'expense' },
-  { id: 'cat_hortifruti', name: 'Hortifruti & Feira', icon: 'Apple', emoji: '🥦', color: '#14B8A6', type: 'expense' },
-  { id: 'cat_casa', name: 'Casa & Aluguel', icon: 'Home', emoji: '🏠', color: '#6366F1', type: 'expense' },
+  // Housing / Condomínio / Aluguel & Utilities
+  { id: 'cat_condominio', name: 'Condomínio', icon: 'Building', emoji: '🏢', color: '#0EA5E9', type: 'expense' },
+  { id: 'cat_aluguel', name: 'Aluguel', icon: 'Key', emoji: '🔑', color: '#6366F1', type: 'expense' },
+  { id: 'cat_casa', name: 'Casa & Decoração', icon: 'Home', emoji: '🏠', color: '#818CF8', type: 'expense' },
   { id: 'cat_agua', name: 'Água & Saneamento', icon: 'Droplets', emoji: '💧', color: '#06B6D4', type: 'expense' },
   { id: 'cat_luz', name: 'Luz (Energia Elétrica)', icon: 'Zap', emoji: '⚡', color: '#F59E0B', type: 'expense' },
   { id: 'cat_telefone', name: 'Telefone & Celular', icon: 'Smartphone', emoji: '📱', color: '#8B5CF6', type: 'expense' },
@@ -41,9 +42,13 @@ export const DEFAULT_CATEGORIES: Category[] = [
   { id: 'cat_energia', name: 'Outras Concessionárias', icon: 'Zap', emoji: '⚡', color: '#F97316', type: 'expense' },
   { id: 'cat_celular', name: 'Recargas & Planos', icon: 'Smartphone', emoji: '📲', color: '#9333EA', type: 'expense' },
 
+  // Supermarket & Food
+  { id: 'cat_mercado', name: 'Supermercado', icon: 'ShoppingCart', emoji: '🛒', color: '#10B981', type: 'expense' },
+  { id: 'cat_hortifruti', name: 'Hortifruti & Feira', icon: 'Apple', emoji: '🥦', color: '#14B8A6', type: 'expense' },
+
   // Transport & Auto
+  { id: 'cat_uber', name: 'Uber & Mobilidade', icon: 'Car', emoji: '🚕', color: '#EAB308', type: 'expense' },
   { id: 'cat_gasolina', name: 'Gasolina & Combustível', icon: 'Fuel', emoji: '⛽', color: '#DC2626', type: 'expense' },
-  { id: 'cat_uber', name: 'Uber & 99', icon: 'Car', emoji: '🚕', color: '#EAB308', type: 'expense' },
   { id: 'cat_transporte', name: 'Ônibus & Metrô', icon: 'Bus', emoji: '🚌', color: '#0284C7', type: 'expense' },
 
   // Apparel & Personal care
@@ -137,13 +142,25 @@ export const INITIAL_FIXED_BILLS: FixedBill[] = [
     profileId: 'user_pessoal',
   },
   {
+    id: 'bill_condominio',
+    name: 'Condomínio do Edifício',
+    amount: 380.00,
+    dueDay: 10,
+    categoryId: 'cat_condominio',
+    categoryName: 'Condomínio',
+    categoryIcon: 'Building',
+    categoryColor: '#0EA5E9',
+    isPaidThisMonth: false,
+    profileId: 'user_pessoal',
+  },
+  {
     id: 'bill_aluguel',
-    name: 'Aluguel do Apartamento',
+    name: 'Aluguel do Imóvel',
     amount: 1200.00,
     dueDay: 10,
-    categoryId: 'cat_casa',
-    categoryName: 'Casa & Aluguel',
-    categoryIcon: 'Home',
+    categoryId: 'cat_aluguel',
+    categoryName: 'Aluguel',
+    categoryIcon: 'Key',
     categoryColor: '#6366F1',
     isPaidThisMonth: true,
     lastPaidDate: '2026-09-10',
@@ -455,6 +472,10 @@ export const INITIAL_TRANSACTIONS: Transaction[] = [
 ];
 
 export const QUICK_PRESETS = [
+  { name: 'iFood', amount: 45.00, categoryId: 'cat_ifood', emoji: '🛵' },
+  { name: 'Uber', amount: 23.50, categoryId: 'cat_uber', emoji: '🚕' },
+  { name: 'Condomínio', amount: 380.00, categoryId: 'cat_condominio', emoji: '🏢' },
+  { name: 'Aluguel', amount: 1200.00, categoryId: 'cat_aluguel', emoji: '🔑' },
   { name: "McDonald's", amount: 32.90, categoryId: 'cat_mcdonalds', emoji: '🍔' },
   { name: 'Chocolate', amount: 8.50, categoryId: 'cat_chocolate', emoji: '🍫' },
   { name: 'Café', amount: 6.00, categoryId: 'cat_cafe', emoji: '☕' },
@@ -463,10 +484,8 @@ export const QUICK_PRESETS = [
   { name: 'Telefone', amount: 69.90, categoryId: 'cat_telefone', emoji: '📱' },
   { name: 'Internet', amount: 99.90, categoryId: 'cat_internet', emoji: '🌐' },
   { name: 'TV a Cabo', amount: 89.90, categoryId: 'cat_tv_cabo', emoji: '📺' },
-  { name: 'Salgadinho', amount: 7.00, categoryId: 'cat_salgadinhos', emoji: '🍟' },
   { name: 'Gasolina', amount: 100.00, categoryId: 'cat_gasolina', emoji: '⛽' },
   { name: 'Mercado', amount: 120.00, categoryId: 'cat_mercado', emoji: '🛒' },
-  { name: 'Uber', amount: 23.50, categoryId: 'cat_uber', emoji: '🚕' },
   { name: 'Gorjeta', amount: 10.00, categoryId: 'cat_gorjeta', emoji: '💰' },
   { name: 'Cinema', amount: 35.00, categoryId: 'cat_cinema', emoji: '🎬' },
 ];

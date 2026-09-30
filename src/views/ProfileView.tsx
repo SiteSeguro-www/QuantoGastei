@@ -26,6 +26,8 @@ import {
 import { useFinance } from '../context/FinanceContext';
 import { UserProfile } from '../types/finance';
 import { PWAInstallSection } from '../components/PWAInstallSection';
+import { MonthCycleModal } from '../components/MonthCycleModal';
+import { Calendar, Clock, ShieldCheck, Zap } from 'lucide-react';
 
 export const ProfileView: React.FC = () => {
   const {
@@ -36,6 +38,8 @@ export const ProfileView: React.FC = () => {
     monthExpenses,
     monthIncome,
     availableBalance,
+    cycleInfo,
+    cacheStatus,
     formatCurrency,
     exportDataCSV,
     exportDataJSON,
@@ -48,6 +52,7 @@ export const ProfileView: React.FC = () => {
 
   const [importFileContent, setImportFileContent] = useState('');
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+  const [isMonthCycleModalOpen, setIsMonthCycleModalOpen] = useState(false);
   const [profileToDelete, setProfileToDelete] = useState<UserProfile | null>(null);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -250,6 +255,71 @@ export const ProfileView: React.FC = () => {
         </div>
       </div>
 
+      {/* Month Cycle Configuration Card */}
+      <div className="p-5 rounded-2xl bg-[#121622]/90 border border-emerald-500/25 space-y-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-emerald-500/15 text-emerald-400 flex items-center justify-center">
+              <Calendar className="w-4 h-4" />
+            </div>
+            <div>
+              <h3 className="text-xs font-bold uppercase tracking-wider text-white">
+                Ciclo Financeiro do Mês
+              </h3>
+              <p className="text-[11px] text-slate-400">
+                Início: <strong className="text-emerald-400 font-bold">Dia {cycleInfo.startDay}</strong> • Período Atual: <strong className="text-white">{cycleInfo.cycleLabel}</strong>
+              </p>
+            </div>
+          </div>
+
+          <button
+            onClick={() => setIsMonthCycleModalOpen(true)}
+            className="px-3 py-1.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-bold transition-all active:scale-95"
+          >
+            Alterar Ciclo
+          </button>
+        </div>
+
+        <div className="p-3 rounded-xl bg-black/30 border border-white/5 flex items-center justify-between text-xs">
+          <span className="text-slate-400">Status do mês:</span>
+          <span className="text-emerald-300 font-semibold font-mono-nums">
+            {cycleInfo.daysRemaining === 0 ? 'Fechamento hoje' : `Faltam ${cycleInfo.daysRemaining} dias para o fechamento`}
+          </span>
+        </div>
+      </div>
+
+      {/* Local Storage & Cache System Status */}
+      <div className="p-5 rounded-2xl bg-[#121622]/90 border border-white/[0.07] space-y-3">
+        <div className="flex items-center gap-2">
+          <ShieldCheck className="w-4 h-4 text-emerald-400" />
+          <h3 className="text-xs font-bold uppercase tracking-wider text-slate-300">
+            Sistema de Salvamento em Cache Local
+          </h3>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-xs">
+          <div className="p-2.5 rounded-xl bg-black/30 border border-white/5">
+            <span className="text-[10px] text-slate-500 block">Status do Cache</span>
+            <span className="text-emerald-400 font-bold mt-0.5 block">Ativo & Seguro</span>
+          </div>
+          <div className="p-2.5 rounded-xl bg-black/30 border border-white/5">
+            <span className="text-[10px] text-slate-500 block">Último Salvamento</span>
+            <span className="text-white font-mono mt-0.5 block">{cacheStatus.lastSavedFormatted}</span>
+          </div>
+          <div className="p-2.5 rounded-xl bg-black/30 border border-white/5">
+            <span className="text-[10px] text-slate-500 block">Tamanho Estimado</span>
+            <span className="text-white font-mono mt-0.5 block">{cacheStatus.totalSizeKb} KB</span>
+          </div>
+          <div className="p-2.5 rounded-xl bg-black/30 border border-white/5">
+            <span className="text-[10px] text-slate-500 block">Chaves Isoladas</span>
+            <span className="text-white font-mono mt-0.5 block">{cacheStatus.totalKeys} itens</span>
+          </div>
+        </div>
+        <p className="text-[11px] text-slate-400 leading-snug">
+          Todos os seus lançamentos, contas e configurações são sincronizados automaticamente em cache local criptografado para acesso instantâneo e offline.
+        </p>
+      </div>
+
       {/* PWA Application Installation Section */}
       <PWAInstallSection />
 
@@ -447,6 +517,12 @@ export const ProfileView: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* Month Cycle Configuration Modal */}
+      <MonthCycleModal
+        isOpen={isMonthCycleModalOpen}
+        onClose={() => setIsMonthCycleModalOpen(false)}
+      />
     </div>
   );
 };
