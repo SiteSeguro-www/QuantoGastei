@@ -648,11 +648,34 @@ export const FinanceProvider: React.FC<{ children: ReactNode }> = ({ children })
       .reduce((acc, tx) => acc + tx.amount, 0);
   }, [transactions, cycleInfo, activeProfileId]);
 
-  const monthIncome = useMemo(() => {
+  const rawMonthIncome = useMemo(() => {
     return transactions
       .filter((tx) => tx.type === 'income' && isDateInCycle(tx.date, cycleInfo) && tx.profileId === activeProfileId)
       .reduce((acc, tx) => acc + tx.amount, 0);
   }, [transactions, cycleInfo, activeProfileId]);
+
+  const hasSalaryTransactionInCycle = useMemo(() => {
+    return transactions.some(
+      (tx) =>
+        tx.profileId === activeProfileId &&
+        tx.type === 'income' &&
+        isDateInCycle(tx.date, cycleInfo) &&
+        (tx.categoryId === 'cat_salario' ||
+          tx.categoryName.toLowerCase().includes('salário') ||
+          (tx.description && (tx.description.toLowerCase().includes('salário') || tx.description.toLowerCase().includes('renda'))))
+    );
+  }, [transactions, cycleInfo, activeProfileId]);
+
+  const monthIncome = useMemo(() => {
+    const baseGoal = activeProfile?.monthlyIncomeGoal || 0;
+    // If user has a base salary registered on profile AND no explicit salary transaction exists in this cycle,
+    // we sum the base salary + any other added incomes (PIX, freela, extra).
+    if (!hasSalaryTransactionInCycle && baseGoal > 0) {
+      return baseGoal + rawMonthIncome;
+    }
+    // Otherwise, if they logged transactions or salary, use the exact sum (or base goal if nothing logged at all)
+    return rawMonthIncome > 0 ? rawMonthIncome : baseGoal;
+  }, [rawMonthIncome, hasSalaryTransactionInCycle, activeProfile]);
 
   const totalFixedBillsAmount = useMemo(() => {
     return fixedBills
@@ -660,11 +683,10 @@ export const FinanceProvider: React.FC<{ children: ReactNode }> = ({ children })
       .reduce((acc, b) => acc + b.amount, 0);
   }, [fixedBills, activeProfileId]);
 
-  // Balance = Month Income - Month Expenses (or if no income logged, based on income goal or real net)
+  // Balance = Total Month Income - Total Month Expenses
   const availableBalance = useMemo(() => {
-    const base = monthIncome > 0 ? monthIncome : (activeProfile?.monthlyIncomeGoal || 0);
-    return base - monthExpenses;
-  }, [monthIncome, monthExpenses, activeProfile]);
+    return monthIncome - monthExpenses;
+  }, [monthIncome, monthExpenses]);
 
   // Upcoming bills
   const upcomingBills = useMemo(() => {

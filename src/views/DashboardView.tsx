@@ -91,7 +91,7 @@ export const DashboardView: React.FC = () => {
             <span className="text-xs text-slate-400">
               Renda mensal da conta:{' '}
               <strong className="text-emerald-400 font-bold font-mono-nums">
-                {formatCurrency(monthIncome > 0 ? monthIncome : (activeProfile.monthlyIncomeGoal || 0))}
+                {formatCurrency(monthIncome)}
               </strong>
             </span>
           </div>
@@ -210,10 +210,10 @@ export const DashboardView: React.FC = () => {
             </div>
           </div>
           <div className="font-mono-nums text-sm xs:text-base sm:text-2xl font-extrabold text-teal-300 tracking-tight truncate">
-            {formatCurrency(monthIncome > 0 ? monthIncome : (activeProfile.monthlyIncomeGoal || 0))}
+            {formatCurrency(monthIncome)}
           </div>
           <span className="text-[10px] sm:text-[11px] text-slate-500 mt-1 block truncate">
-            {monthIncome > 0 ? 'Entradas registradas' : 'Renda cadastrada'}
+            {monthIncome > 0 ? 'Entradas do ciclo' : 'Renda cadastrada'}
           </span>
         </div>
 
