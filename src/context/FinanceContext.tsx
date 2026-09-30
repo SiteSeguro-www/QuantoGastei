@@ -97,7 +97,7 @@ export const getCurrentTimeString = (): string => {
 
 // Route & tab mapping helpers
 const TAB_ROUTES: Record<ViewTab, string> = {
-  landing: '/',
+  landing: '/inicio',
   dashboard: '/dashboard',
   history: '/historico',
   analytics: '/resumo',
@@ -108,7 +108,7 @@ const TAB_ROUTES: Record<ViewTab, string> = {
 };
 
 const getInitialTabFromLocation = (): ViewTab => {
-  if (typeof window === 'undefined') return 'landing';
+  if (typeof window === 'undefined') return 'dashboard';
   const path = window.location.pathname.toLowerCase().replace(/\/+$/, '') || '/';
   const params = new URLSearchParams(window.location.search);
   const tabParam = params.get('tab') as ViewTab | null;
@@ -117,6 +117,8 @@ const getInitialTabFromLocation = (): ViewTab => {
     return tabParam;
   }
 
+  // Explicit route paths
+  if (path === '/inicio' || path === '/landing') return 'landing';
   if (path === '/dashboard' || path === '/painel') return 'dashboard';
   if (path === '/history' || path === '/historico' || path === '/gastos') return 'history';
   if (path === '/analytics' || path === '/resumo' || path === '/receitas') return 'analytics';
@@ -124,8 +126,23 @@ const getInitialTabFromLocation = (): ViewTab => {
   if (path === '/fixed-bills' || path === '/contas' || path === '/contas-fixas') return 'fixed-bills';
   if (path === '/categories' || path === '/categorias') return 'categories';
   if (path === '/profile' || path === '/perfil' || path === '/configuracoes' || path === '/aplicativo') return 'profile';
-  if (path === '/' || path === '' || path === '/inicio' || path === '/landing') return 'landing';
 
+  // If entering via root path ('/'), check if user already has at least 1 account created
+  try {
+    const activeProfileId = localStorage.getItem('finan_active_profile_id');
+    const storedProfiles = localStorage.getItem('finan_profiles');
+    const parsedProfiles = storedProfiles ? JSON.parse(storedProfiles) : [];
+
+    if (activeProfileId || (Array.isArray(parsedProfiles) && parsedProfiles.length > 0)) {
+      // User has already created / has accounts -> go directly to dashboard
+      return 'dashboard';
+    }
+  } catch {
+    // fallback to dashboard if any error
+    return 'dashboard';
+  }
+
+  // Brand new visitor with no profiles
   return 'landing';
 };
 
