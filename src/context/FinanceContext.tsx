@@ -328,7 +328,10 @@ export const FinanceProvider: React.FC<{ children: ReactNode }> = ({ children })
     const savedCats = localStorage.getItem(`finan_cats_${profileId}`);
     if (savedCats) {
       try {
-        setCategories(JSON.parse(savedCats));
+        const parsed: Category[] = JSON.parse(savedCats);
+        const existingIds = new Set(parsed.map((c) => c.id));
+        const missingDefaults = DEFAULT_CATEGORIES.filter((c) => !existingIds.has(c.id));
+        setCategories([...parsed, ...missingDefaults]);
       } catch {
         setCategories(DEFAULT_CATEGORIES);
       }

@@ -45,6 +45,12 @@ import {
   ShoppingBag,
   Heart,
   CarFront,
+  Flower2,
+  Wrench,
+  Hammer,
+  Receipt,
+  QrCode,
+  FileText,
 } from 'lucide-react';
 
 interface CategoryIconProps {
@@ -100,6 +106,12 @@ export const ICON_MAP: Record<string, React.ComponentType<{ className?: string; 
   Music,
   ShoppingBag,
   Heart,
+  Flower2,
+  Wrench,
+  Hammer,
+  Receipt,
+  QrCode,
+  FileText,
 };
 
 export const CategoryIcon: React.FC<CategoryIconProps> = ({ icon, emoji, className = 'w-5 h-5', size = 20 }) => {
@@ -122,7 +134,8 @@ export const AVAILABLE_ICONS = [
   'Bus', 'Shirt', 'Footprints', 'Scissors', 'Sparkles', 'Gamepad2',
   'Film', 'Dog', 'Gift', 'Coins', 'Package', 'Dumbbell', 'Pill',
   'Plane', 'CreditCard', 'Briefcase', 'Laptop', 'TrendingUp', 'Wallet',
-  'Landmark', 'BookOpen', 'Stethoscope', 'Hotel', 'Tag'
+  'Landmark', 'BookOpen', 'Stethoscope', 'Hotel', 'Tag',
+  'Flower2', 'Wrench', 'Hammer', 'Receipt', 'QrCode', 'FileText'
 ];
 
 export const AVAILABLE_COLORS = [

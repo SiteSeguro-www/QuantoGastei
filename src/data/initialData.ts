@@ -46,16 +46,25 @@ export const DEFAULT_CATEGORIES: Category[] = [
   { id: 'cat_mercado', name: 'Supermercado', icon: 'ShoppingCart', emoji: '🛒', color: '#10B981', type: 'expense' },
   { id: 'cat_hortifruti', name: 'Hortifruti & Feira', icon: 'Apple', emoji: '🥦', color: '#14B8A6', type: 'expense' },
 
-  // Transport & Auto
+  // Transport & Auto & Repairs
   { id: 'cat_uber', name: 'Uber & Mobilidade', icon: 'Car', emoji: '🚕', color: '#EAB308', type: 'expense' },
   { id: 'cat_gasolina', name: 'Gasolina & Combustível', icon: 'Fuel', emoji: '⛽', color: '#DC2626', type: 'expense' },
   { id: 'cat_transporte', name: 'Ônibus & Metrô', icon: 'Bus', emoji: '🚌', color: '#0284C7', type: 'expense' },
+  { id: 'cat_mecanico', name: 'Mecânico', icon: 'Wrench', emoji: '🔧', color: '#F97316', type: 'expense' },
+  { id: 'cat_oficina', name: 'Oficina & Reparos', icon: 'Hammer', emoji: '🛠️', color: '#EA580C', type: 'expense' },
 
-  // Apparel & Personal care
+  // Apparel & Personal care & Gifts
+  { id: 'cat_flor', name: 'Flor & Floricultura', icon: 'Flower2', emoji: '🌸', color: '#F43F5E', type: 'expense' },
   { id: 'cat_roupa', name: 'Roupa & Vestuário', icon: 'Shirt', emoji: '👕', color: '#A855F7', type: 'expense' },
   { id: 'cat_sapato', name: 'Calçados & Tênis', icon: 'Footprints', emoji: '👟', color: '#64748B', type: 'expense' },
   { id: 'cat_barbearia', name: 'Barbearia & Cabelo', icon: 'Scissors', emoji: '💈', color: '#0284C7', type: 'expense' },
   { id: 'cat_beleza', name: 'Beleza & Cuidados', icon: 'Sparkles', emoji: '💇', color: '#D946EF', type: 'expense' },
+
+  // Banking, Cards & Payments
+  { id: 'cat_cartao_credito', name: 'Cartão de Crédito', icon: 'CreditCard', emoji: '💳', color: '#6366F1', type: 'expense' },
+  { id: 'cat_boleto', name: 'Boleto Bancário', icon: 'Receipt', emoji: '📄', color: '#EAB308', type: 'expense' },
+  { id: 'cat_pix', name: 'PIX (Transferência / Pagamento)', icon: 'QrCode', emoji: '⚡', color: '#06B6D4', type: 'both' },
+  { id: 'cat_cartao', name: 'Cartão & Bancos', icon: 'CreditCard', emoji: '💳', color: '#475569', type: 'expense' },
 
   // Entertainment & Lifestyle
   { id: 'cat_jogos', name: 'Jogos & Games', icon: 'Gamepad2', emoji: '🎮', color: '#8B5CF6', type: 'expense' },
