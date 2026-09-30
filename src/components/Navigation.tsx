@@ -126,8 +126,12 @@ export const DesktopSidebar: React.FC = () => {
     <aside className="hidden md:flex flex-col w-64 h-screen sticky top-0 shrink-0 bg-[#0C101A] border-r border-white/[0.08] p-4 select-none">
       {/* Brand header */}
       <div className="flex items-center justify-between px-2 py-2 mb-4">
-        <div className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-slate-950 font-black shadow-md shadow-emerald-950/40">
+        <button
+          onClick={() => setActiveTab('landing')}
+          className="flex items-center gap-2.5 text-left hover:opacity-85 transition-opacity"
+          title="Ir para a Página Inicial"
+        >
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-slate-950 font-black shadow-md shadow-emerald-950/40 shrink-0">
             <Sparkles className="w-5 h-5" />
           </div>
           <div>
@@ -138,7 +142,7 @@ export const DesktopSidebar: React.FC = () => {
               Controle Pessoal
             </span>
           </div>
-        </div>
+        </button>
         <PWACompactInstallButton />
       </div>
 

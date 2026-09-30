@@ -87,6 +87,7 @@ export const getCurrentTimeString = (): string => {
 
 // Route & tab mapping helpers
 const TAB_ROUTES: Record<ViewTab, string> = {
+  landing: '/',
   dashboard: '/dashboard',
   history: '/historico',
   analytics: '/resumo',
@@ -97,23 +98,25 @@ const TAB_ROUTES: Record<ViewTab, string> = {
 };
 
 const getInitialTabFromLocation = (): ViewTab => {
-  if (typeof window === 'undefined') return 'dashboard';
+  if (typeof window === 'undefined') return 'landing';
   const path = window.location.pathname.toLowerCase().replace(/\/+$/, '') || '/';
   const params = new URLSearchParams(window.location.search);
   const tabParam = params.get('tab') as ViewTab | null;
 
-  if (tabParam && ['dashboard', 'history', 'analytics', 'calendar', 'fixed-bills', 'categories', 'profile'].includes(tabParam)) {
+  if (tabParam && ['landing', 'dashboard', 'history', 'analytics', 'calendar', 'fixed-bills', 'categories', 'profile'].includes(tabParam)) {
     return tabParam;
   }
 
+  if (path === '/dashboard' || path === '/painel') return 'dashboard';
   if (path === '/history' || path === '/historico' || path === '/gastos') return 'history';
   if (path === '/analytics' || path === '/resumo' || path === '/receitas') return 'analytics';
   if (path === '/calendar' || path === '/calendario') return 'calendar';
   if (path === '/fixed-bills' || path === '/contas' || path === '/contas-fixas') return 'fixed-bills';
   if (path === '/categories' || path === '/categorias') return 'categories';
   if (path === '/profile' || path === '/perfil' || path === '/configuracoes' || path === '/aplicativo') return 'profile';
+  if (path === '/' || path === '' || path === '/inicio' || path === '/landing') return 'landing';
 
-  return 'dashboard';
+  return 'landing';
 };
 
 const shouldOpenAddModalFromUrl = (): boolean => {

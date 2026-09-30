@@ -49,4 +49,4 @@ export interface UserProfile {
   monthlyIncomeGoal: number;
 }
 
-export type ViewTab = 'dashboard' | 'history' | 'analytics' | 'calendar' | 'fixed-bills' | 'categories' | 'profile';
+export type ViewTab = 'landing' | 'dashboard' | 'history' | 'analytics' | 'calendar' | 'fixed-bills' | 'categories' | 'profile';

@@ -11,6 +11,7 @@ import { CalendarView } from './views/CalendarView';
 import { FixedBillsView } from './views/FixedBillsView';
 import { CategoriesView } from './views/CategoriesView';
 import { ProfileView } from './views/ProfileView';
+import { LandingPageView } from './views/LandingPageView';
 import { Users, ChevronDown, Plus } from 'lucide-react';
 import { OfflineIndicator, PWAUpdateNotification } from './components/PWAPrompts';
 import { PWACompactInstallButton } from './components/PWAInstallSection';
@@ -18,12 +19,42 @@ import { PWACompactInstallButton } from './components/PWAInstallSection';
 const AppContent: React.FC = () => {
   const {
     activeTab,
+    setActiveTab,
     isAddModalOpen,
     setIsAddModalOpen,
     isAccountModalOpen,
     setIsAccountModalOpen,
     activeProfile,
   } = useFinance();
+
+  // If landing tab, render the high-impact landing page view directly
+  if (activeTab === 'landing') {
+    return (
+      <div className="min-h-screen bg-[#080B11] text-slate-100 flex flex-col antialiased selection:bg-emerald-500/25 selection:text-emerald-300 w-full overflow-x-hidden">
+        {/* Toast notifications */}
+        <ToastContainer />
+
+        {/* PWA offline & update banners */}
+        <OfflineIndicator />
+        <PWAUpdateNotification />
+
+        {/* Landing Page Content */}
+        <LandingPageView />
+
+        {/* Global Add/Edit Transaction Modal if triggered via shortcut */}
+        <AddTransactionModal
+          isOpen={isAddModalOpen}
+          onClose={() => setIsAddModalOpen(false)}
+        />
+
+        {/* Global Account & User Management Modal */}
+        <AccountManagerModal
+          isOpen={isAccountModalOpen}
+          onClose={() => setIsAccountModalOpen(false)}
+        />
+      </div>
+    );
+  }
 
   const renderActiveView = () => {
     switch (activeTab) {
@@ -60,14 +91,18 @@ const AppContent: React.FC = () => {
 
       {/* Mobile Top Header (visible on mobile only) */}
       <header className="md:hidden sticky top-0 z-30 bg-[#090A0F]/95 backdrop-blur-md border-b border-white/[0.08] px-3.5 py-2.5 flex items-center justify-between gap-2">
-        <div className="flex items-center gap-2 min-w-0">
+        <button
+          onClick={() => setActiveTab('landing')}
+          className="flex items-center gap-2 min-w-0 text-left hover:opacity-85 transition-opacity"
+          title="Ir para a Página Inicial"
+        >
           <div className="w-7 h-7 rounded-lg bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-slate-950 font-black shadow-sm shrink-0">
             <span className="text-xs">💰</span>
           </div>
           <span className="text-sm font-extrabold text-white tracking-tight truncate">
             QuantoGastei
           </span>
-        </div>
+        </button>
 
         <div className="flex items-center gap-1.5 shrink-0">
           {/* Quick Install Button for mobile if not yet installed */}

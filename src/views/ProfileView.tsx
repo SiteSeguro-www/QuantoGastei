@@ -21,6 +21,7 @@ import {
   Trash2,
   Check,
   AlertTriangle,
+  Sparkles,
 } from 'lucide-react';
 import { useFinance } from '../context/FinanceContext';
 import { UserProfile } from '../types/finance';
@@ -106,14 +107,25 @@ export const ProfileView: React.FC = () => {
                 <p className="text-xs text-slate-400">{activeProfile.email}</p>
               </div>
 
-              {/* Profile switch button */}
-              <button
-                onClick={() => setIsAccountModalOpen(true)}
-                className="flex items-center gap-2 self-center sm:self-auto bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 px-3.5 py-1.5 rounded-xl text-xs font-bold text-emerald-300 transition-all active:scale-95"
-              >
-                <Users className="w-3.5 h-3.5" />
-                <span>Gerenciar / Trocar Conta ({profiles.length})</span>
-              </button>
+              {/* Profile switch and Landing page buttons */}
+              <div className="flex flex-wrap items-center gap-2 self-center sm:self-auto">
+                <button
+                  onClick={() => setActiveTab('landing')}
+                  className="flex items-center gap-1.5 bg-white/5 hover:bg-white/10 border border-white/10 px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-300 transition-all active:scale-95"
+                  title="Voltar para a Página Inicial com seleção de usuários"
+                >
+                  <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>Página Inicial</span>
+                </button>
+
+                <button
+                  onClick={() => setIsAccountModalOpen(true)}
+                  className="flex items-center gap-2 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 px-3.5 py-1.5 rounded-xl text-xs font-bold text-emerald-300 transition-all active:scale-95"
+                >
+                  <Users className="w-3.5 h-3.5" />
+                  <span>Gerenciar Contas ({profiles.length})</span>
+                </button>
+              </div>
             </div>
 
             {/* Monthly mini-stats */}
