@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import { useFinance, getTodayString, getCurrentTimeString } from '../context/FinanceContext';
 import { Category, TransactionType } from '../types/finance';
-import { CategoryIcon, AVAILABLE_ICONS, AVAILABLE_COLORS } from './CategoryIcon';
+import { CategoryIcon, AVAILABLE_ICONS, AVAILABLE_COLORS, getNextDistinctColor } from './CategoryIcon';
 
 interface AddTransactionModalProps {
   isOpen: boolean;
@@ -328,7 +328,12 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
               </label>
               <button
                 type="button"
-                onClick={() => setIsCreatingCategory(!isCreatingCategory)}
+                onClick={() => {
+                  if (!isCreatingCategory) {
+                    setNewCatColor(getNextDistinctColor(categories));
+                  }
+                  setIsCreatingCategory(!isCreatingCategory);
+                }}
                 className="text-xs font-medium text-emerald-400 hover:text-emerald-300 flex items-center gap-1 transition-colors"
               >
                 <Plus className="w-3.5 h-3.5" />
@@ -353,10 +358,10 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
                   </button>
                 </div>
 
-                <div className="space-y-2">
+                <div className="space-y-2.5">
                   <input
                     type="text"
-                    placeholder="Nome da categoria (ex: Livros, Natação)"
+                    placeholder="Nome da categoria (ex: Livros, Natação, Açougue)"
                     value={newCatName}
                     onChange={(e) => setNewCatName(e.target.value)}
                     className="w-full px-3 py-2 text-sm rounded-lg bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
@@ -366,7 +371,7 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
                   <div>
                     <span className="text-[11px] text-slate-400 block mb-1">Escolha um ícone:</span>
                     <div className="flex gap-1.5 overflow-x-auto pb-1 no-scrollbar">
-                      {AVAILABLE_ICONS.slice(0, 14).map((ic) => (
+                      {AVAILABLE_ICONS.slice(0, 18).map((ic) => (
                         <button
                           key={ic}
                           type="button"
@@ -385,19 +390,30 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
 
                   {/* Color selection */}
                   <div>
-                    <span className="text-[11px] text-slate-400 block mb-1">Escolha uma cor:</span>
-                    <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
-                      {AVAILABLE_COLORS.map((col) => (
-                        <button
-                          key={col}
-                          type="button"
-                          onClick={() => setNewCatColor(col)}
-                          className="w-6 h-6 rounded-full shrink-0 flex items-center justify-center transition-transform"
-                          style={{ backgroundColor: col }}
-                        >
-                          {newCatColor === col && <Check className="w-3.5 h-3.5 text-white" />}
-                        </button>
-                      ))}
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-[11px] text-slate-400">Escolha uma cor exclusiva:</span>
+                      <div className="flex items-center gap-1">
+                        <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: newCatColor }} />
+                        <span className="text-[10px] font-mono text-slate-400 uppercase">{newCatColor}</span>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-8 sm:grid-cols-12 gap-1.5 max-h-24 overflow-y-auto p-1.5 rounded-lg bg-black/40 border border-white/5 custom-scrollbar">
+                      {AVAILABLE_COLORS.map((col) => {
+                        const isSelected = newCatColor.toUpperCase() === col.toUpperCase();
+                        return (
+                          <button
+                            key={col}
+                            type="button"
+                            onClick={() => setNewCatColor(col)}
+                            className={`w-6 h-6 rounded-md shrink-0 flex items-center justify-center transition-transform ${
+                              isSelected ? 'ring-2 ring-white scale-110 z-10' : 'hover:scale-105'
+                            }`}
+                            style={{ backgroundColor: col }}
+                          >
+                            {isSelected && <Check className="w-3 h-3 text-white stroke-[3]" />}
+                          </button>
+                        );
+                      })}
                     </div>
                   </div>
 

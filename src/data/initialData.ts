@@ -20,70 +20,70 @@ export const DEFAULT_PROFILES: UserProfile[] = [
 ];
 
 export const DEFAULT_CATEGORIES: Category[] = [
+  // Açougue, Supermarket & Fresh Food
+  { id: 'cat_acougue', name: 'Açougue & Carnes', icon: 'Beef', emoji: '🥩', color: '#BE123C', type: 'expense' },
+  { id: 'cat_mercado', name: 'Supermercado', icon: 'ShoppingCart', emoji: '🛒', color: '#10B981', type: 'expense' },
+  { id: 'cat_hortifruti', name: 'Hortifruti & Feira', icon: 'Apple', emoji: '🥦', color: '#16A34A', type: 'expense' },
+
   // Fast food / delivery / snacks
   { id: 'cat_ifood', name: 'iFood & Delivery', icon: 'ShoppingBag', emoji: '🛵', color: '#EA1D2C', type: 'expense' },
   { id: 'cat_mcdonalds', name: "McDonald's", icon: 'Utensils', emoji: '🍔', color: '#EF4444', type: 'expense' },
   { id: 'cat_pizza', name: 'Pizza', icon: 'Pizza', emoji: '🍕', color: '#F97316', type: 'expense' },
-  { id: 'cat_chocolate', name: 'Chocolate', icon: 'Cookie', emoji: '🍫', color: '#854D0E', type: 'expense' },
+  { id: 'cat_chocolate', name: 'Chocolate', icon: 'Cookie', emoji: '🍫', color: '#78350F', type: 'expense' },
   { id: 'cat_doces', name: 'Doces & Sobremesas', icon: 'Cake', emoji: '🍬', color: '#EC4899', type: 'expense' },
-  { id: 'cat_salgadinhos', name: 'Salgadinhos', icon: 'Popcorn', emoji: '🍟', color: '#EAB308', type: 'expense' },
-  { id: 'cat_cafe', name: 'Café & Lanche', icon: 'Coffee', emoji: '☕', color: '#A16207', type: 'expense' },
-  { id: 'cat_restaurante', name: 'Restaurante', icon: 'UtensilsCrossed', emoji: '🍽️', color: '#F43F5E', type: 'expense' },
+  { id: 'cat_salgadinhos', name: 'Salgadinhos', icon: 'Popcorn', emoji: '🍟', color: '#F59E0B', type: 'expense' },
+  { id: 'cat_cafe', name: 'Café & Lanche', icon: 'Coffee', emoji: '☕', color: '#92400E', type: 'expense' },
+  { id: 'cat_restaurante', name: 'Restaurante', icon: 'UtensilsCrossed', emoji: '🍽️', color: '#E11D48', type: 'expense' },
 
   // Housing / Condomínio / Aluguel & Utilities
-  { id: 'cat_condominio', name: 'Condomínio', icon: 'Building', emoji: '🏢', color: '#0EA5E9', type: 'expense' },
-  { id: 'cat_aluguel', name: 'Aluguel', icon: 'Key', emoji: '🔑', color: '#6366F1', type: 'expense' },
+  { id: 'cat_condominio', name: 'Condomínio', icon: 'Building', emoji: '🏢', color: '#0284C7', type: 'expense' },
+  { id: 'cat_aluguel', name: 'Aluguel', icon: 'Key', emoji: '🔑', color: '#4F46E5', type: 'expense' },
   { id: 'cat_casa', name: 'Casa & Decoração', icon: 'Home', emoji: '🏠', color: '#818CF8', type: 'expense' },
   { id: 'cat_agua', name: 'Água & Saneamento', icon: 'Droplets', emoji: '💧', color: '#06B6D4', type: 'expense' },
-  { id: 'cat_luz', name: 'Luz (Energia Elétrica)', icon: 'Zap', emoji: '⚡', color: '#F59E0B', type: 'expense' },
+  { id: 'cat_luz', name: 'Luz (Energia Elétrica)', icon: 'Zap', emoji: '⚡', color: '#FBBF24', type: 'expense' },
   { id: 'cat_telefone', name: 'Telefone & Celular', icon: 'Smartphone', emoji: '📱', color: '#8B5CF6', type: 'expense' },
-  { id: 'cat_internet', name: 'Internet & Wi-Fi', icon: 'Wifi', emoji: '🌐', color: '#3B82F6', type: 'expense' },
+  { id: 'cat_internet', name: 'Internet & Wi-Fi', icon: 'Wifi', emoji: '🌐', color: '#2563EB', type: 'expense' },
   { id: 'cat_tv_cabo', name: 'TV a Cabo & Assinatura', icon: 'Tv', emoji: '📺', color: '#A855F7', type: 'expense' },
-  { id: 'cat_energia', name: 'Outras Concessionárias', icon: 'Zap', emoji: '⚡', color: '#F97316', type: 'expense' },
+  { id: 'cat_energia', name: 'Outras Concessionárias', icon: 'Zap', emoji: '⚡', color: '#FB923C', type: 'expense' },
   { id: 'cat_celular', name: 'Recargas & Planos', icon: 'Smartphone', emoji: '📲', color: '#9333EA', type: 'expense' },
 
-  // Supermarket & Food
-  { id: 'cat_mercado', name: 'Supermercado', icon: 'ShoppingCart', emoji: '🛒', color: '#10B981', type: 'expense' },
-  { id: 'cat_hortifruti', name: 'Hortifruti & Feira', icon: 'Apple', emoji: '🥦', color: '#14B8A6', type: 'expense' },
-
   // Transport & Auto & Repairs
-  { id: 'cat_uber', name: 'Uber & Mobilidade', icon: 'Car', emoji: '🚕', color: '#EAB308', type: 'expense' },
+  { id: 'cat_uber', name: 'Uber & Mobilidade', icon: 'Car', emoji: '🚕', color: '#D97706', type: 'expense' },
   { id: 'cat_gasolina', name: 'Gasolina & Combustível', icon: 'Fuel', emoji: '⛽', color: '#DC2626', type: 'expense' },
-  { id: 'cat_transporte', name: 'Ônibus & Metrô', icon: 'Bus', emoji: '🚌', color: '#0284C7', type: 'expense' },
-  { id: 'cat_mecanico', name: 'Mecânico', icon: 'Wrench', emoji: '🔧', color: '#F97316', type: 'expense' },
-  { id: 'cat_oficina', name: 'Oficina & Reparos', icon: 'Hammer', emoji: '🛠️', color: '#EA580C', type: 'expense' },
+  { id: 'cat_transporte', name: 'Ônibus & Metrô', icon: 'Bus', emoji: '🚌', color: '#0369A1', type: 'expense' },
+  { id: 'cat_mecanico', name: 'Mecânico', icon: 'Wrench', emoji: '🔧', color: '#EA580C', type: 'expense' },
+  { id: 'cat_oficina', name: 'Oficina & Reparos', icon: 'Hammer', emoji: '🛠️', color: '#C2410C', type: 'expense' },
 
   // Apparel & Personal care & Gifts
-  { id: 'cat_flor', name: 'Flor & Floricultura', icon: 'Flower2', emoji: '🌸', color: '#F43F5E', type: 'expense' },
-  { id: 'cat_roupa', name: 'Roupa & Vestuário', icon: 'Shirt', emoji: '👕', color: '#A855F7', type: 'expense' },
-  { id: 'cat_sapato', name: 'Calçados & Tênis', icon: 'Footprints', emoji: '👟', color: '#64748B', type: 'expense' },
-  { id: 'cat_barbearia', name: 'Barbearia & Cabelo', icon: 'Scissors', emoji: '💈', color: '#0284C7', type: 'expense' },
+  { id: 'cat_flor', name: 'Flor & Floricultura', icon: 'Flower2', emoji: '🌸', color: '#FB7185', type: 'expense' },
+  { id: 'cat_roupa', name: 'Roupa & Vestuário', icon: 'Shirt', emoji: '👕', color: '#7C3AED', type: 'expense' },
+  { id: 'cat_sapato', name: 'Calçados & Tênis', icon: 'Footprints', emoji: '👟', color: '#475569', type: 'expense' },
+  { id: 'cat_barbearia', name: 'Barbearia & Cabelo', icon: 'Scissors', emoji: '💈', color: '#0891B2', type: 'expense' },
   { id: 'cat_beleza', name: 'Beleza & Cuidados', icon: 'Sparkles', emoji: '💇', color: '#D946EF', type: 'expense' },
 
   // Banking, Cards & Payments
   { id: 'cat_cartao_credito', name: 'Cartão de Crédito', icon: 'CreditCard', emoji: '💳', color: '#6366F1', type: 'expense' },
-  { id: 'cat_boleto', name: 'Boleto Bancário', icon: 'Receipt', emoji: '📄', color: '#EAB308', type: 'expense' },
-  { id: 'cat_pix', name: 'PIX (Transferência / Pagamento)', icon: 'QrCode', emoji: '⚡', color: '#06B6D4', type: 'both' },
-  { id: 'cat_cartao', name: 'Cartão & Bancos', icon: 'CreditCard', emoji: '💳', color: '#475569', type: 'expense' },
+  { id: 'cat_boleto', name: 'Boleto Bancário', icon: 'Receipt', emoji: '📄', color: '#CA8A04', type: 'expense' },
+  { id: 'cat_pix', name: 'PIX (Transferência / Pagamento)', icon: 'QrCode', emoji: '⚡', color: '#14B8A6', type: 'both' },
+  { id: 'cat_cartao', name: 'Cartão & Bancos', icon: 'CreditCard', emoji: '💳', color: '#334155', type: 'expense' },
 
   // Entertainment & Lifestyle
-  { id: 'cat_jogos', name: 'Jogos & Games', icon: 'Gamepad2', emoji: '🎮', color: '#8B5CF6', type: 'expense' },
-  { id: 'cat_cinema', name: 'Cinema & Streaming', icon: 'Film', emoji: '🎬', color: '#E11D48', type: 'expense' },
-  { id: 'cat_pets', name: 'Pets & Veterinário', icon: 'Dog', emoji: '🐶', color: '#F97316', type: 'expense' },
-  { id: 'cat_presentes', name: 'Presentes', icon: 'Gift', emoji: '🎁', color: '#EC4899', type: 'expense' },
-  { id: 'cat_gorjeta', name: 'Gorjeta', icon: 'Coins', emoji: '💰', color: '#10B981', type: 'expense' },
+  { id: 'cat_jogos', name: 'Jogos & Games', icon: 'Gamepad2', emoji: '🎮', color: '#6D28D9', type: 'expense' },
+  { id: 'cat_cinema', name: 'Cinema & Streaming', icon: 'Film', emoji: '🎬', color: '#BE185D', type: 'expense' },
+  { id: 'cat_pets', name: 'Pets & Veterinário', icon: 'Dog', emoji: '🐶', color: '#B45309', type: 'expense' },
+  { id: 'cat_presentes', name: 'Presentes', icon: 'Gift', emoji: '🎁', color: '#F472B6', type: 'expense' },
+  { id: 'cat_gorjeta', name: 'Gorjeta', icon: 'Coins', emoji: '💰', color: '#84CC16', type: 'expense' },
   { id: 'cat_compras', name: 'Compras em Geral', icon: 'Package', emoji: '📦', color: '#64748B', type: 'expense' },
   { id: 'cat_academia', name: 'Academia & Treino', icon: 'Dumbbell', emoji: '🏋️', color: '#059669', type: 'expense' },
-  { id: 'cat_farmacia', name: 'Farmácia & Saúde', icon: 'Pill', emoji: '💊', color: '#06B6D4', type: 'expense' },
-  { id: 'cat_viagem', name: 'Viagem & Hospedagem', icon: 'Plane', emoji: '✈️', color: '#2563EB', type: 'expense' },
-  { id: 'cat_cartao', name: 'Cartão & Bancos', icon: 'CreditCard', emoji: '💳', color: '#475569', type: 'expense' },
+  { id: 'cat_farmacia', name: 'Farmácia & Saúde', icon: 'Pill', emoji: '💊', color: '#0EA5E9', type: 'expense' },
+  { id: 'cat_viagem', name: 'Viagem & Hospedagem', icon: 'Plane', emoji: '✈️', color: '#3B82F6', type: 'expense' },
   { id: 'cat_outros', name: 'Outros Gastos', icon: 'Tag', emoji: '📌', color: '#71717A', type: 'expense' },
 
   // Income categories
-  { id: 'cat_salario', name: 'Salário Mensal', icon: 'Briefcase', emoji: '💼', color: '#10B981', type: 'income' },
-  { id: 'cat_freelance', name: 'Freelance & Extra', icon: 'Laptop', emoji: '💻', color: '#06B6D4', type: 'income' },
-  { id: 'cat_rendimentos', name: 'Rendimentos & Invest.', icon: 'TrendingUp', emoji: '📈', color: '#8B5CF6', type: 'income' },
-  { id: 'cat_receita_outros', name: 'Outras Entradas', icon: 'Wallet', emoji: '💵', color: '#22C55E', type: 'income' },
+  { id: 'cat_salario', name: 'Salário Mensal', icon: 'Briefcase', emoji: '💼', color: '#22C55E', type: 'income' },
+  { id: 'cat_freelance', name: 'Freelance & Extra', icon: 'Laptop', emoji: '💻', color: '#0D9488', type: 'income' },
+  { id: 'cat_rendimentos', name: 'Rendimentos & Invest.', icon: 'TrendingUp', emoji: '📈', color: '#581C87', type: 'income' },
+  { id: 'cat_receita_outros', name: 'Outras Entradas', icon: 'Wallet', emoji: '💵', color: '#34D399', type: 'income' },
 ];
 
 export const INITIAL_FIXED_BILLS: FixedBill[] = [
@@ -481,6 +481,7 @@ export const INITIAL_TRANSACTIONS: Transaction[] = [
 ];
 
 export const QUICK_PRESETS = [
+  { name: 'Açougue', amount: 65.00, categoryId: 'cat_acougue', emoji: '🥩' },
   { name: 'iFood', amount: 45.00, categoryId: 'cat_ifood', emoji: '🛵' },
   { name: 'Uber', amount: 23.50, categoryId: 'cat_uber', emoji: '🚕' },
   { name: 'Condomínio', amount: 380.00, categoryId: 'cat_condominio', emoji: '🏢' },

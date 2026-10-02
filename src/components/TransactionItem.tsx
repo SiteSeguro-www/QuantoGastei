@@ -13,10 +13,11 @@ export const TransactionItem: React.FC<TransactionItemProps> = ({
   transaction,
   onOpenDelete,
 }) => {
-  const { setEditingTransaction, setIsAddModalOpen, quickAdjustAmount, formatCurrency } = useFinance();
+  const { categories, setEditingTransaction, setIsAddModalOpen, quickAdjustAmount, formatCurrency } = useFinance();
   const [isExpanded, setIsExpanded] = useState(false);
 
   const isExpense = transaction.type === 'expense';
+  const categoryColor = categories.find((c) => c.id === transaction.categoryId)?.color || transaction.categoryColor || '#71717A';
 
   const handleEdit = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -45,9 +46,9 @@ export const TransactionItem: React.FC<TransactionItemProps> = ({
           <div
             className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center shrink-0 border transition-transform group-hover:scale-105"
             style={{
-              backgroundColor: `${transaction.categoryColor}18`,
-              borderColor: `${transaction.categoryColor}35`,
-              color: transaction.categoryColor,
+              backgroundColor: `${categoryColor}18`,
+              borderColor: `${categoryColor}35`,
+              color: categoryColor,
             }}
           >
             <CategoryIcon icon={transaction.categoryIcon} className="w-4 h-4 sm:w-5 sm:h-5" />

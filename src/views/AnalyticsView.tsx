@@ -15,13 +15,17 @@ import { useFinance, getTodayString } from '../context/FinanceContext';
 import { CategoryIcon } from '../components/CategoryIcon';
 
 export const AnalyticsView: React.FC = () => {
-  const { transactions, formatCurrency, activeProfile } = useFinance();
+  const { transactions, categories, formatCurrency, activeProfile } = useFinance();
 
   const [selectedMonth, setSelectedMonth] = useState<string>(() => {
     return getTodayString().substring(0, 7); // '2026-09'
   });
 
   const [activeCategorySlice, setActiveCategorySlice] = useState<string | null>(null);
+
+  const categoryColorMap = useMemo(() => {
+    return new Map(categories.map((c) => [c.id, c.color]));
+  }, [categories]);
 
   // Filter transactions by selected month
   const monthTransactions = useMemo(() => {
@@ -48,16 +52,17 @@ export const AnalyticsView: React.FC = () => {
 
   const netBalance = totalIncome - totalExpense;
 
-  // Category breakdown
+  // Category breakdown with guaranteed unique colors
   const categoryBreakdown = useMemo(() => {
     const map: { [id: string]: { name: string; icon: string; color: string; amount: number; count: number } } = {};
 
     expenseTransactions.forEach((tx) => {
+      const resolvedColor = categoryColorMap.get(tx.categoryId) || tx.categoryColor || '#71717A';
       if (!map[tx.categoryId]) {
         map[tx.categoryId] = {
           name: tx.categoryName,
           icon: tx.categoryIcon,
-          color: tx.categoryColor,
+          color: resolvedColor,
           amount: 0,
           count: 0,
         };
@@ -73,7 +78,7 @@ export const AnalyticsView: React.FC = () => {
     }));
 
     return list.sort((a, b) => b.amount - a.amount);
-  }, [expenseTransactions, totalExpense]);
+  }, [expenseTransactions, totalExpense, categoryColorMap]);
 
   // Top category
   const topCategory = categoryBreakdown[0] || null;

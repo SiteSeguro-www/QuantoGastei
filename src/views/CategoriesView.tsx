@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Tag, Plus, Check, Trash2, Sparkles, X } from 'lucide-react';
+import { Tag, Plus, Check, Trash2, Sparkles, X, Palette } from 'lucide-react';
 import { useFinance } from '../context/FinanceContext';
-import { CategoryIcon, AVAILABLE_ICONS, AVAILABLE_COLORS } from '../components/CategoryIcon';
+import { CategoryIcon, AVAILABLE_ICONS, AVAILABLE_COLORS, getNextDistinctColor } from '../components/CategoryIcon';
 import { TransactionType } from '../types/finance';
 
 export const CategoriesView: React.FC = () => {
@@ -14,7 +14,7 @@ export const CategoriesView: React.FC = () => {
   const [name, setName] = useState('');
   const [icon, setIcon] = useState('Tag');
   const [emoji, setEmoji] = useState('📌');
-  const [color, setColor] = useState('#3B82F6');
+  const [color, setColor] = useState('#BE123C');
   const [type, setType] = useState<TransactionType>('expense');
 
   const filteredCategories = categories.filter((c) => {
@@ -26,7 +26,9 @@ export const CategoriesView: React.FC = () => {
     setName('');
     setIcon('Tag');
     setEmoji('📌');
-    setColor('#3B82F6');
+    // Pre-select a guaranteed unused distinct color!
+    const nextColor = getNextDistinctColor(categories);
+    setColor(nextColor);
     setType('expense');
     setIsModalOpen(true);
   };
@@ -233,21 +235,41 @@ export const CategoriesView: React.FC = () => {
 
               {/* Color Selector */}
               <div>
-                <label className="text-xs font-semibold text-slate-300 block mb-1.5">
-                  Cor de Destaque
-                </label>
-                <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
-                  {AVAILABLE_COLORS.map((col) => (
-                    <button
-                      key={col}
-                      type="button"
-                      onClick={() => setColor(col)}
-                      className="w-7 h-7 rounded-full shrink-0 flex items-center justify-center transition-transform hover:scale-105"
-                      style={{ backgroundColor: col }}
-                    >
-                      {color === col && <Check className="w-4 h-4 text-white" />}
-                    </button>
-                  ))}
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="text-xs font-semibold text-slate-300">
+                    Cor Exclusiva da Categoria
+                  </label>
+                  <div className="flex items-center gap-1.5">
+                    <span
+                      className="w-3.5 h-3.5 rounded-full border border-white/20"
+                      style={{ backgroundColor: color }}
+                    />
+                    <span className="text-[11px] font-mono text-slate-400 uppercase">
+                      {color}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-8 sm:grid-cols-12 gap-1.5 max-h-32 overflow-y-auto p-1.5 rounded-xl bg-black/30 border border-white/5 custom-scrollbar">
+                  {AVAILABLE_COLORS.map((col) => {
+                    const isSelected = color.toUpperCase() === col.toUpperCase();
+                    return (
+                      <button
+                        key={col}
+                        type="button"
+                        onClick={() => setColor(col)}
+                        className={`w-7 h-7 rounded-lg shrink-0 flex items-center justify-center transition-all ${
+                          isSelected
+                            ? 'ring-2 ring-white scale-110 shadow-lg z-10'
+                            : 'hover:scale-105 opacity-90 hover:opacity-100'
+                        }`}
+                        style={{ backgroundColor: col }}
+                        title={col}
+                      >
+                        {isSelected && <Check className="w-3.5 h-3.5 text-white stroke-[3] drop-shadow" />}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 

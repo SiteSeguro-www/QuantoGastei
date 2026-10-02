@@ -3,6 +3,7 @@ import { Category, FixedBill, MonthCycleInfo, Transaction, UserProfile, ViewTab 
 import { DEFAULT_CATEGORIES, DEFAULT_PROFILES, INITIAL_FIXED_BILLS, INITIAL_TRANSACTIONS } from '../data/initialData';
 import { calculateMonthCycle, isDateInCycle } from '../utils/cycleHelper';
 import { getCacheStatus, loadFromCache, saveToCache } from '../utils/storageCache';
+import { getNextDistinctColor } from '../components/CategoryIcon';
 
 export interface ToastMessage {
   id: number;
@@ -243,14 +244,21 @@ export const FinanceProvider: React.FC<{ children: ReactNode }> = ({ children })
 
   // Load categories
   const [categories, setCategories] = useState<Category[]>(() => {
+    const defaultColorMap = new Map(DEFAULT_CATEGORIES.map((c) => [c.id, c.color]));
     const saved = localStorage.getItem(`finan_cats_${activeProfileId}`);
     if (saved) {
       try {
         const parsed: Category[] = JSON.parse(saved);
-        // Merge any new default categories that might not exist yet in local storage
+        // Merge any new default categories (like Açougue) & update default colors to distinct unique colors
         const existingIds = new Set(parsed.map((c) => c.id));
         const missingDefaults = DEFAULT_CATEGORIES.filter((c) => !existingIds.has(c.id));
-        return [...parsed, ...missingDefaults];
+        const updatedParsed = parsed.map((c) => {
+          if (!c.isCustom && defaultColorMap.has(c.id)) {
+            return { ...c, color: defaultColorMap.get(c.id)! };
+          }
+          return c;
+        });
+        return [...updatedParsed, ...missingDefaults];
       } catch {
         // fallback
       }
@@ -326,12 +334,19 @@ export const FinanceProvider: React.FC<{ children: ReactNode }> = ({ children })
     }
 
     const savedCats = localStorage.getItem(`finan_cats_${profileId}`);
+    const defaultColorMap = new Map(DEFAULT_CATEGORIES.map((c) => [c.id, c.color]));
     if (savedCats) {
       try {
         const parsed: Category[] = JSON.parse(savedCats);
         const existingIds = new Set(parsed.map((c) => c.id));
         const missingDefaults = DEFAULT_CATEGORIES.filter((c) => !existingIds.has(c.id));
-        setCategories([...parsed, ...missingDefaults]);
+        const updatedParsed = parsed.map((c) => {
+          if (!c.isCustom && defaultColorMap.has(c.id)) {
+            return { ...c, color: defaultColorMap.get(c.id)! };
+          }
+          return c;
+        });
+        setCategories([...updatedParsed, ...missingDefaults]);
       } catch {
         setCategories(DEFAULT_CATEGORIES);
       }
@@ -550,15 +565,17 @@ export const FinanceProvider: React.FC<{ children: ReactNode }> = ({ children })
     showToast(`Valor ajustado: ${sign}`, 'info');
   };
 
-  // Add category
+  // Add category with guaranteed distinct color
   const addCategory = (cat: Omit<Category, 'id' | 'isCustom'>): Category => {
+    const assignedColor = cat.color || getNextDistinctColor(categories);
     const newCat: Category = {
       ...cat,
+      color: assignedColor,
       id: `cat_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
       isCustom: true,
     };
     setCategories((prev) => [...prev, newCat]);
-    showToast(`✓ Categoria "${cat.name}" criada`, 'success');
+    showToast(`✓ Categoria "${cat.name}" criada com cor exclusiva!`, 'success');
     return newCat;
   };
 
