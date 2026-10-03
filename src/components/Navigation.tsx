@@ -11,10 +11,14 @@ import {
   ArrowDownLeft,
   ArrowUpRight,
   Sparkles,
+  Palette,
+  Sun,
+  Moon,
 } from 'lucide-react';
 import { useFinance } from '../context/FinanceContext';
 import { ViewTab } from '../types/finance';
 import { PWACompactInstallButton } from './PWAInstallSection';
+import { AVAILABLE_THEMES } from '../data/themesData';
 
 export const MobileBottomNav: React.FC = () => {
   const { activeTab, setActiveTab, setIsAddModalOpen, setEditingTransaction } = useFinance();
@@ -99,6 +103,10 @@ export const DesktopSidebar: React.FC = () => {
     setActiveTab,
     setIsAddModalOpen,
     setIsAccountModalOpen,
+    isThemeModalOpen,
+    setIsThemeModalOpen,
+    currentTheme,
+    toggleThemeMode,
     setEditingTransaction,
     activeProfile,
     profiles,
@@ -106,6 +114,9 @@ export const DesktopSidebar: React.FC = () => {
     availableBalance,
     formatCurrency,
   } = useFinance();
+
+  const isLight = currentTheme === 'light-clean' || currentTheme === 'light-nordic';
+  const currentThemeObj = AVAILABLE_THEMES.find((t) => t.id === currentTheme) || AVAILABLE_THEMES[0];
 
   const handleOpenAdd = () => {
     setEditingTransaction(null);
@@ -149,11 +160,38 @@ export const DesktopSidebar: React.FC = () => {
       {/* Main Action Button */}
       <button
         onClick={handleOpenAdd}
-        className="w-full mb-6 py-3 px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:brightness-110 text-slate-950 font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-emerald-950/30 active:scale-[0.98] transition-all"
+        className="w-full mb-3 py-3 px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:brightness-110 text-slate-950 font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-emerald-950/30 active:scale-[0.98] transition-all"
       >
         <Plus className="w-4 h-4 stroke-[3]" />
         + Adicionar Gasto
       </button>
+
+      {/* Theme & Layout Quick Switch Button */}
+      <div className="mb-4 flex items-center gap-1.5 p-1.5 rounded-xl bg-white/[0.04] border border-white/5">
+        <button
+          onClick={() => setIsThemeModalOpen(true)}
+          className="flex-1 flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-white/5 text-left transition-colors"
+          title="Abrir catálogo completo de temas e layouts"
+        >
+          <Palette className="w-4 h-4 text-purple-400 shrink-0" />
+          <div className="min-w-0 flex-1">
+            <span className="text-[11px] font-bold text-white block leading-tight truncate">
+              {currentThemeObj.name.split('(')[0].trim()}
+            </span>
+            <span className="text-[9.5px] text-slate-400 block truncate">
+              {isLight ? 'Modo Claro ☀️' : 'Modo Escuro 🌙'}
+            </span>
+          </div>
+        </button>
+
+        <button
+          onClick={toggleThemeMode}
+          className="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center text-slate-300 transition-colors shrink-0"
+          title={isLight ? 'Mudar para Modo Escuro' : 'Mudar para Modo Claro'}
+        >
+          {isLight ? <Sun className="w-4 h-4 text-amber-500" /> : <Moon className="w-4 h-4 text-purple-400" />}
+        </button>
+      </div>
 
       {/* Navigation Links */}
       <nav className="space-y-1 flex-1 overflow-y-auto pr-1">
@@ -178,38 +216,35 @@ export const DesktopSidebar: React.FC = () => {
       </nav>
 
       {/* Bottom Profile & Balance Card */}
-      <div className="pt-4 border-t border-white/[0.06] space-y-3">
+      <div className="pt-3 border-t border-white/[0.06] space-y-2.5">
         {/* Quick Balance Status */}
-        <div className="p-3 rounded-xl bg-black/40 border border-white/5">
-          <span className="text-[11px] text-slate-400 uppercase tracking-wider block">
+        <div className="p-2.5 rounded-xl bg-black/40 border border-white/5">
+          <span className="text-[10px] text-slate-400 uppercase tracking-wider block">
             Saldo Disponível
           </span>
-          <span className="text-base font-bold font-mono-nums text-emerald-400 block mt-0.5">
+          <span className="text-sm font-bold font-mono-nums text-emerald-400 block mt-0.5">
             {formatCurrency(availableBalance)}
           </span>
         </div>
 
         {/* Profile Switcher */}
-        <div className="p-2.5 rounded-xl bg-white/[0.03] border border-white/5 space-y-2">
-          <div className="flex items-center gap-2.5 min-w-0">
-            <div className="w-8 h-8 rounded-full bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-300 font-bold text-xs shrink-0">
+        <div className="p-2 rounded-xl bg-white/[0.03] border border-white/5 space-y-1.5">
+          <div className="flex items-center gap-2 min-w-0">
+            <div className="w-7 h-7 rounded-full bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-300 font-bold text-xs shrink-0">
               {activeProfile.name.charAt(0)}
             </div>
             <div className="min-w-0 flex-1">
               <span className="text-xs font-semibold text-white block truncate">
                 {activeProfile.name}
               </span>
-              <span className="text-[10px] text-slate-400 block truncate">
-                {activeProfile.email}
-              </span>
             </div>
           </div>
 
           <button
             onClick={() => setIsAccountModalOpen(true)}
-            className="w-full py-1.5 px-2.5 rounded-lg bg-white/5 hover:bg-white/10 text-emerald-400 border border-white/5 text-[11px] font-bold flex items-center justify-center gap-1.5 transition-colors"
+            className="w-full py-1 px-2 rounded-lg bg-white/5 hover:bg-white/10 text-emerald-400 border border-white/5 text-[10.5px] font-bold flex items-center justify-center gap-1 transition-colors"
           >
-            <span>Gerenciar Contas / + Nova</span>
+            <span>Gerenciar Contas</span>
           </button>
         </div>
       </div>

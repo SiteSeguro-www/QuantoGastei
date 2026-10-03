@@ -1,8 +1,10 @@
 import React from 'react';
 import { FinanceProvider, useFinance } from './context/FinanceContext';
 import { DesktopSidebar, MobileBottomNav } from './components/Navigation';
+import { ModernTopbarNav } from './components/ModernTopbarNav';
 import { AddTransactionModal } from './components/AddTransactionModal';
 import { AccountManagerModal } from './components/AccountManagerModal';
+import { ThemeManagerModal } from './components/ThemeManagerModal';
 import { ToastContainer } from './components/ToastContainer';
 import { DashboardView } from './views/DashboardView';
 import { HistoryView } from './views/HistoryView';
@@ -12,7 +14,7 @@ import { FixedBillsView } from './views/FixedBillsView';
 import { CategoriesView } from './views/CategoriesView';
 import { ProfileView } from './views/ProfileView';
 import { LandingPageView } from './views/LandingPageView';
-import { Users, ChevronDown, Plus } from 'lucide-react';
+import { Users, ChevronDown, Plus, Palette, Sun, Moon, LayoutGrid } from 'lucide-react';
 import { OfflineIndicator, PWAUpdateNotification } from './components/PWAPrompts';
 import { PWACompactInstallButton } from './components/PWAInstallSection';
 
@@ -24,13 +26,25 @@ const AppContent: React.FC = () => {
     setIsAddModalOpen,
     isAccountModalOpen,
     setIsAccountModalOpen,
+    isThemeModalOpen,
+    setIsThemeModalOpen,
+    currentTheme,
+    toggleThemeMode,
+    layoutMode,
+    toggleLayoutMode,
     activeProfile,
   } = useFinance();
+
+  const isLight = currentTheme === 'light-clean' || currentTheme === 'light-nordic';
+  const isBento = layoutMode === 'modern-bento';
 
   // If landing tab, render the high-impact landing page view directly
   if (activeTab === 'landing') {
     return (
-      <div className="min-h-screen bg-[#080B11] text-slate-100 flex flex-col antialiased selection:bg-emerald-500/25 selection:text-emerald-300 w-full overflow-x-hidden">
+      <div
+        data-theme={currentTheme}
+        className="min-h-screen app-root bg-[#080B11] text-slate-100 flex flex-col antialiased selection:bg-emerald-500/25 selection:text-emerald-300 w-full overflow-x-hidden transition-colors duration-200"
+      >
         {/* Toast notifications */}
         <ToastContainer />
 
@@ -51,6 +65,12 @@ const AppContent: React.FC = () => {
         <AccountManagerModal
           isOpen={isAccountModalOpen}
           onClose={() => setIsAccountModalOpen(false)}
+        />
+
+        {/* Global Theme & Layout Selector Modal */}
+        <ThemeManagerModal
+          isOpen={isThemeModalOpen}
+          onClose={() => setIsThemeModalOpen(false)}
         />
       </div>
     );
@@ -78,7 +98,12 @@ const AppContent: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#090A0F] text-slate-100 flex flex-col md:flex-row antialiased selection:bg-emerald-500/25 selection:text-emerald-300 w-full overflow-x-hidden">
+    <div
+      data-theme={currentTheme}
+      className={`min-h-screen app-root bg-[#090A0F] text-slate-100 flex flex-col ${
+        isBento ? '' : 'md:flex-row'
+      } antialiased selection:bg-emerald-500/25 selection:text-emerald-300 w-full overflow-x-hidden transition-colors duration-200`}
+    >
       {/* Toast notifications */}
       <ToastContainer />
 
@@ -86,11 +111,11 @@ const AppContent: React.FC = () => {
       <OfflineIndicator />
       <PWAUpdateNotification />
 
-      {/* Desktop Sidebar (visible on md+) */}
-      <DesktopSidebar />
+      {/* Navigation depending on Layout Mode */}
+      {isBento ? <ModernTopbarNav /> : <DesktopSidebar />}
 
       {/* Mobile Top Header (visible on mobile only) */}
-      <header className="md:hidden sticky top-0 z-30 bg-[#090A0F]/95 backdrop-blur-md border-b border-white/[0.08] px-3.5 py-2.5 flex items-center justify-between gap-2">
+      <header className="md:hidden sticky top-0 z-30 bg-[#090A0F]/95 backdrop-blur-md border-b border-white/[0.08] px-3 py-2 flex items-center justify-between gap-2">
         <button
           onClick={() => setActiveTab('landing')}
           className="flex items-center gap-2 min-w-0 text-left hover:opacity-85 transition-opacity"
@@ -105,13 +130,31 @@ const AppContent: React.FC = () => {
         </button>
 
         <div className="flex items-center gap-1.5 shrink-0">
+          {/* Quick Layout Mode Switch Button on mobile */}
+          <button
+            onClick={toggleLayoutMode}
+            className="p-1.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 active:scale-95 transition-all text-emerald-400"
+            title={isBento ? 'Mudar para Layout Clássico' : 'Mudar para Layout Bento'}
+          >
+            <LayoutGrid className="w-4 h-4" />
+          </button>
+
+          {/* Quick Theme Toggle & Modal trigger on mobile */}
+          <button
+            onClick={() => setIsThemeModalOpen(true)}
+            className="p-1.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 active:scale-95 transition-all text-slate-300"
+            title="Trocar tema e layout"
+          >
+            {isLight ? <Sun className="w-4 h-4 text-amber-500" /> : <Palette className="w-4 h-4 text-purple-400" />}
+          </button>
+
           {/* Quick Install Button for mobile if not yet installed */}
           <PWACompactInstallButton className="hidden xs:flex" />
 
           {/* Quick Account Switcher Button */}
           <button
             onClick={() => setIsAccountModalOpen(true)}
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 active:scale-95 transition-all shrink-0 max-w-[150px]"
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 active:scale-95 transition-all shrink-0 max-w-[120px]"
             title="Alternar conta ou adicionar novo usuário"
           >
             <div className="w-5 h-5 rounded-md bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-[11px] font-extrabold shrink-0">
@@ -127,7 +170,7 @@ const AppContent: React.FC = () => {
 
       {/* Main Content Area */}
       <main className="flex-1 flex flex-col min-w-0 min-h-screen w-full overflow-x-hidden">
-        <div className="w-full max-w-5xl mx-auto px-3.5 sm:px-6 lg:px-8 py-3.5 sm:py-7 flex-1 pb-28 md:pb-12">
+        <div className={`w-full ${isBento ? 'max-w-7xl' : 'max-w-5xl'} mx-auto px-3.5 sm:px-6 lg:px-8 py-3.5 sm:py-7 flex-1 pb-28 md:pb-12`}>
           {renderActiveView()}
         </div>
       </main>
@@ -146,6 +189,12 @@ const AppContent: React.FC = () => {
         isOpen={isAccountModalOpen}
         onClose={() => setIsAccountModalOpen(false)}
       />
+
+      {/* Global Theme & Layout Selector Modal */}
+      <ThemeManagerModal
+        isOpen={isThemeModalOpen}
+        onClose={() => setIsThemeModalOpen(false)}
+      />
     </div>
   );
 };
@@ -157,3 +206,4 @@ export default function App() {
     </FinanceProvider>
   );
 }
+

@@ -22,12 +22,15 @@ import {
   Check,
   AlertTriangle,
   Sparkles,
+  Palette,
+  Sun,
 } from 'lucide-react';
 import { useFinance } from '../context/FinanceContext';
 import { UserProfile } from '../types/finance';
 import { PWAInstallSection } from '../components/PWAInstallSection';
 import { MonthCycleModal } from '../components/MonthCycleModal';
 import { Calendar, Clock, ShieldCheck, Zap } from 'lucide-react';
+import { AVAILABLE_THEMES } from '../data/themesData';
 
 export const ProfileView: React.FC = () => {
   const {
@@ -47,6 +50,9 @@ export const ProfileView: React.FC = () => {
     resetToDefaults,
     setActiveTab,
     setIsAccountModalOpen,
+    currentTheme,
+    setTheme,
+    setIsThemeModalOpen,
     showToast,
   } = useFinance();
 
@@ -250,6 +256,71 @@ export const ProfileView: React.FC = () => {
                   </button>
                 </div>
               </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Theme & Layout Customization Box */}
+      <div className="p-5 rounded-2xl bg-[#121622]/90 border border-purple-500/25 space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-purple-500/20 text-purple-400 flex items-center justify-center">
+              <Palette className="w-4 h-4" />
+            </div>
+            <div>
+              <h3 className="text-xs font-bold uppercase tracking-wider text-white">
+                Personalização de Layout & Tema do Site
+              </h3>
+              <p className="text-[11px] text-slate-400">
+                Alterne instantaneamente entre o modelo claro contemporâneo e modos escuros
+              </p>
+            </div>
+          </div>
+
+          <button
+            onClick={() => setIsThemeModalOpen(true)}
+            className="px-3.5 py-1.5 rounded-xl bg-purple-500/15 hover:bg-purple-500/25 border border-purple-500/30 text-purple-300 text-xs font-bold flex items-center gap-1.5 transition-all self-start sm:self-auto active:scale-95"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-purple-400" />
+            Catálogo de Temas ({AVAILABLE_THEMES.length})
+          </button>
+        </div>
+
+        {/* Quick theme cards grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+          {AVAILABLE_THEMES.map((th) => {
+            const isActive = currentTheme === th.id;
+            return (
+              <button
+                key={th.id}
+                onClick={() => {
+                  setTheme(th.id);
+                  showToast(`✓ Layout alterado para "${th.name}"!`, 'success');
+                }}
+                className={`p-3 rounded-xl border text-left transition-all flex flex-col justify-between gap-2 cursor-pointer ${
+                  isActive
+                    ? 'bg-purple-950/25 border-purple-500 ring-2 ring-purple-500/40 shadow-md'
+                    : 'bg-black/30 border-white/5 hover:border-white/15'
+                }`}
+              >
+                <div className="flex items-center justify-between w-full">
+                  <span className="text-xl">{th.emoji}</span>
+                  {isActive ? (
+                    <span className="w-5 h-5 rounded-full bg-purple-500 text-white flex items-center justify-center text-[10px] font-bold">
+                      ✓
+                    </span>
+                  ) : (
+                    <span className="text-[9.5px] font-mono text-slate-400 font-semibold px-1.5 py-0.5 rounded bg-white/5">
+                      {th.mode === 'light' ? '☀️ Claro' : '🌙 Escuro'}
+                    </span>
+                  )}
+                </div>
+                <div>
+                  <span className="text-xs font-bold text-white block truncate">{th.name}</span>
+                  <span className="text-[10px] text-slate-400 block truncate">{th.badge}</span>
+                </div>
+              </button>
             );
           })}
         </div>

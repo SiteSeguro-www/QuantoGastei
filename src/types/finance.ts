@@ -64,4 +64,20 @@ export interface MonthCycleInfo {
   isCustomCycle: boolean;
 }
 
+export type ThemeId = 'dark-emerald' | 'light-clean' | 'light-nordic' | 'cyber-violet' | 'luxury-gold' | 'ocean-blue';
+export type LayoutMode = 'classic-sidebar' | 'modern-bento';
+
+export interface ThemeConfig {
+  id: ThemeId;
+  name: string;
+  tagline: string;
+  mode: 'dark' | 'light';
+  accentColor: string;
+  bgHex: string;
+  cardHex: string;
+  textHex: string;
+  emoji: string;
+  badge: string;
+}
+
 export type ViewTab = 'landing' | 'dashboard' | 'history' | 'analytics' | 'calendar' | 'fixed-bills' | 'categories' | 'profile';

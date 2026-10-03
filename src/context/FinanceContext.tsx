@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useMemo, ReactNode } from 'react';
-import { Category, FixedBill, MonthCycleInfo, Transaction, UserProfile, ViewTab } from '../types/finance';
+import { Category, FixedBill, LayoutMode, MonthCycleInfo, ThemeId, Transaction, UserProfile, ViewTab } from '../types/finance';
 import { DEFAULT_CATEGORIES, DEFAULT_PROFILES, INITIAL_FIXED_BILLS, INITIAL_TRANSACTIONS } from '../data/initialData';
 import { calculateMonthCycle, isDateInCycle } from '../utils/cycleHelper';
 import { getCacheStatus, loadFromCache, saveToCache } from '../utils/storageCache';
@@ -25,6 +25,16 @@ interface FinanceContextType {
   toasts: ToastMessage[];
   showToast: (message: string, type?: 'success' | 'info' | 'error') => void;
   removeToast: (id: number) => void;
+
+  // Theme & Layout System
+  currentTheme: ThemeId;
+  setTheme: (theme: ThemeId) => void;
+  toggleThemeMode: () => void;
+  layoutMode: LayoutMode;
+  setLayoutMode: (mode: LayoutMode) => void;
+  toggleLayoutMode: () => void;
+  isThemeModalOpen: boolean;
+  setIsThemeModalOpen: (open: boolean) => void;
 
   // Month cycle configuration
   monthCycleStartDay: number;
@@ -288,8 +298,80 @@ export const FinanceProvider: React.FC<{ children: ReactNode }> = ({ children })
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
   const [isAddModalOpen, setIsAddModalOpen] = useState<boolean>(() => shouldOpenAddModalFromUrl());
   const [isAccountModalOpen, setIsAccountModalOpen] = useState(false);
+  const [isThemeModalOpen, setIsThemeModalOpen] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
   const [presetPreload, setPresetPreload] = useState<{ categoryId?: string; amount?: number; description?: string } | null>(null);
+
+  // Theme & Layout state
+  const [currentTheme, setCurrentThemeState] = useState<ThemeId>(() => {
+    try {
+      const saved = localStorage.getItem('finan_app_theme');
+      if (saved && ['dark-emerald', 'light-clean', 'light-nordic', 'cyber-violet', 'luxury-gold', 'ocean-blue'].includes(saved)) {
+        return saved as ThemeId;
+      }
+    } catch {
+      // fallback
+    }
+    return 'light-clean';
+  });
+
+  const [layoutMode, setLayoutModeState] = useState<LayoutMode>(() => {
+    try {
+      const saved = localStorage.getItem('finan_layout_mode');
+      if (saved === 'classic-sidebar' || saved === 'modern-bento') {
+        return saved;
+      }
+    } catch {
+      // fallback
+    }
+    return 'modern-bento';
+  });
+
+  const setLayoutMode = (mode: LayoutMode) => {
+    setLayoutModeState(mode);
+    try {
+      localStorage.setItem('finan_layout_mode', mode);
+    } catch {
+      // ignore
+    }
+    showToast(
+      mode === 'modern-bento'
+        ? '📐 Layout Executivo Bento ativado!'
+        : '📐 Layout Clássico com Barra Lateral ativado!',
+      'info'
+    );
+  };
+
+  const toggleLayoutMode = () => {
+    const next = layoutMode === 'classic-sidebar' ? 'modern-bento' : 'classic-sidebar';
+    setLayoutMode(next);
+  };
+
+  const setTheme = (theme: ThemeId) => {
+    setCurrentThemeState(theme);
+    try {
+      localStorage.setItem('finan_app_theme', theme);
+    } catch {
+      // ignore
+    }
+    if (typeof document !== 'undefined') {
+      document.documentElement.setAttribute('data-theme', theme);
+    }
+  };
+
+  const toggleThemeMode = () => {
+    const isLight = currentTheme === 'light-clean' || currentTheme === 'light-nordic';
+    const nextTheme: ThemeId = isLight ? 'dark-emerald' : 'light-clean';
+    setTheme(nextTheme);
+    showToast(isLight ? '🌙 Modo Escuro ativado' : '☀️ Modo Claro ativado', 'info');
+  };
+
+  // Sync data-theme on mount
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      document.documentElement.setAttribute('data-theme', currentTheme);
+    }
+  }, [currentTheme]);
 
   // Sync to localStorage and cache whenever transactions change
   useEffect(() => {
@@ -846,6 +928,14 @@ export const FinanceProvider: React.FC<{ children: ReactNode }> = ({ children })
         availableBalance,
         totalFixedBillsAmount,
         upcomingBills,
+        currentTheme,
+        setTheme,
+        toggleThemeMode,
+        layoutMode,
+        setLayoutMode,
+        toggleLayoutMode,
+        isThemeModalOpen,
+        setIsThemeModalOpen,
         isAddModalOpen,
         setIsAddModalOpen,
         isAccountModalOpen,

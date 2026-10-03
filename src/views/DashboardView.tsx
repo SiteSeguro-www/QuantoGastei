@@ -15,6 +15,7 @@ import {
   Users,
   UserPlus,
   ChevronDown,
+  LayoutGrid,
 } from 'lucide-react';
 import { useFinance, getTodayString } from '../context/FinanceContext';
 import { QUICK_PRESETS } from '../data/initialData';
@@ -24,6 +25,7 @@ import { Transaction } from '../types/finance';
 import { CategoryIcon } from '../components/CategoryIcon';
 import { MonthCycleModal } from '../components/MonthCycleModal';
 import { ShieldCheck, Database } from 'lucide-react';
+import { ModernBentoDashboardView } from './ModernBentoDashboardView';
 
 export const DashboardView: React.FC = () => {
   const {
@@ -40,6 +42,8 @@ export const DashboardView: React.FC = () => {
     transactions,
     cycleInfo,
     cacheStatus,
+    layoutMode,
+    toggleLayoutMode,
     setIsAddModalOpen,
     setEditingTransaction,
     setPresetPreload,
@@ -47,6 +51,11 @@ export const DashboardView: React.FC = () => {
     toggleBillPaid,
     formatCurrency,
   } = useFinance();
+
+  // If modern bento layout is active, render the dedicated Bento Dashboard model!
+  if (layoutMode === 'modern-bento') {
+    return <ModernBentoDashboardView />;
+  }
 
   // Delete modal state
   const [txToDelete, setTxToDelete] = useState<Transaction | null>(null);
@@ -79,6 +88,22 @@ export const DashboardView: React.FC = () => {
 
   return (
     <div className="space-y-6 pb-24 md:pb-12">
+      {/* Layout Mode Switch Banner */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 rounded-2xl bg-white/[0.04] border border-white/10">
+        <div className="flex items-center gap-2.5">
+          <LayoutGrid className="w-4 h-4 text-emerald-400" />
+          <span className="text-xs text-slate-300 font-medium">
+            Modelo de Layout Atual: <strong className="text-white">Clássico (Barra Lateral)</strong>
+          </span>
+        </div>
+        <button
+          onClick={toggleLayoutMode}
+          className="px-3.5 py-1.5 rounded-xl bg-emerald-500 text-slate-950 text-xs font-black hover:brightness-110 transition-all self-start sm:self-auto active:scale-95 shadow-md shadow-emerald-950/20"
+        >
+          Trocar para Layout Bento Executivo 📐
+        </button>
+      </div>
+
       {/* Top Greeting & Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
         <div>
